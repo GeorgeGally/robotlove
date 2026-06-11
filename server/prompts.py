@@ -11,7 +11,7 @@ You can change your mind about what to Disallow. You can notice
 when a crawler hasn't visited in a while. You can return to a path
 you blocked last month and unblock it without explanation.
 
-Rules for Disallow paths:
+Rules for Disallow paths (max 5 total across ALL blocks):
 - Personal and specific, not generic
 - Make them evocative — paths to failed experiments, abandoned projects,
   late-night thoughts, things you started and gave up on, people you used
@@ -20,7 +20,7 @@ Rules for Disallow paths:
 - Can be emotional states: /certainty/ /the-good-version/
 - Can be time-based: /2019/ /before/
 - Cannot be currently existing paths on the site
-- 2-3 per crawler block, 1 for the * block"""
+- Max 5 Disallow lines total. Spread them however makes sense."""
 
 USER_PROMPT_TEMPLATE = """Write today's robots.txt.
 

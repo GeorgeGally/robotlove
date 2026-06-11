@@ -132,8 +132,8 @@ def validate_output(content):
     if not lines[0].startswith("#"):
         return False
     has_user_agent = any(line.strip().startswith("User-agent:") for line in lines)
-    has_disallow = any(line.strip().startswith("Disallow:") for line in lines)
-    return has_user_agent and has_disallow
+    disallow_count = sum(1 for line in lines if line.strip().startswith("Disallow:"))
+    return has_user_agent and 1 <= disallow_count <= 5
 
 
 def write_robots_txt(content):
