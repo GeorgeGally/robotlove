@@ -9,8 +9,8 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #111;
-      color: #e0e0e0;
+      background: #e8e8e8;
+      color: #222;
       font-family: 'Courier New', Courier, monospace;
       font-size: 15px;
       line-height: 1.7;
@@ -22,6 +22,43 @@
     .page {
       max-width: 700px;
       width: 100%;
+    }
+
+    .heart {
+      width: 18px;
+      height: 15px;
+      margin-bottom: 20px;
+    }
+
+    .heart::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 3px;
+      background: #ff4444;
+      box-shadow:
+        3px 0 #ff4444,
+        6px 0 #ff4444,
+        9px 0 #ff4444,
+        12px 0 #ff4444,
+        0 3px #ff4444,
+        3px 3px #ff4444,
+        6px 3px #ff4444,
+        9px 3px #ff4444,
+        12px 3px #ff4444,
+        15px 3px #ff4444,
+        0 6px #ff4444,
+        3px 6px #ff4444,
+        6px 6px #ff4444,
+        9px 6px #ff4444,
+        12px 6px #ff4444,
+        15px 6px #ff4444,
+        3px 9px #ff4444,
+        6px 9px #ff4444,
+        9px 9px #ff4444,
+        12px 9px #ff4444,
+        6px 12px #ff4444,
+        9px 12px #ff4444;
     }
 
     .bar {
@@ -55,13 +92,14 @@
       line-height: 1.1;
       margin-bottom: 12px;
       letter-spacing: -1px;
+      color: #111;
     }
 
     h1 .hl { color: #ff4444; }
 
     .sub {
       font-size: 16px;
-      color: #888;
+      color: #666;
       margin-bottom: 60px;
       line-height: 1.5;
     }
@@ -70,19 +108,19 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #666;
+      color: #888;
       margin-bottom: 16px;
       margin-top: 50px;
     }
 
     h3 {
       font-size: 15px;
-      color: #e0e0e0;
+      color: #222;
       margin-top: 30px;
       margin-bottom: 10px;
     }
 
-    p { margin-bottom: 20px; color: #aaa; }
+    p { margin-bottom: 20px; color: #444; }
 
     a { color: #ff4444; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -93,37 +131,37 @@
     }
 
     .code {
-      background: #1a1a1a;
-      border-left: 3px solid #333;
+      background: #d4d4d4;
+      border-left: 3px solid #bbb;
       padding: 16px 20px;
       margin: 16px 0 24px;
       overflow-x: auto;
       white-space: pre;
-      color: #ccc;
+      color: #333;
       font-size: 13px;
       line-height: 1.6;
     }
 
-    .code .c { color: #555; }
+    .code .c { color: #888; }
     .code .hl { color: #ff4444; }
-    .code .g { color: #6a6; }
+    .code .g { color: #4a4; }
 
-    ul { margin: 0 0 24px 20px; color: #aaa; }
+    ul { margin: 0 0 24px 20px; color: #444; }
     li { margin-bottom: 6px; }
 
     .spec {
-      background: #1a1a1a;
+      background: #d4d4d4;
       border-left: 3px solid #ff4444;
       padding: 20px;
       margin: 20px 0 30px;
     }
 
-    .spec p { margin-bottom: 8px; font-size: 14px; }
+    .spec p { margin-bottom: 8px; font-size: 14px; color: #333; }
 
     .badge {
       display: inline-block;
-      background: #ff4444;
-      color: #111;
+      background: #111;
+      color: #e0e0e0;
       padding: 2px 8px;
       font-size: 11px;
       font-weight: bold;
@@ -134,12 +172,12 @@
     .footer {
       margin-top: 80px;
       padding-top: 30px;
-      border-top: 1px solid #222;
+      border-top: 1px solid #ccc;
       font-size: 13px;
-      color: #555;
+      color: #999;
     }
 
-    .footer a { color: #666; }
+    .footer a { color: #888; }
     .footer a:hover { color: #ff4444; }
 
     @media (max-width: 500px) {
@@ -150,6 +188,8 @@
 </head>
 <body>
 <div class="page">
+
+  <div class="heart"></div>
 
   <div class="bar">
     <span class="hash">#</span>
