@@ -120,6 +120,7 @@
 
       const response = await fetch(`${origin}/robots.txt`, {
         signal: controller.signal,
+        cache: 'no-cache',
       })
       clearTimeout(timeout)
 
