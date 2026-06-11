@@ -11,6 +11,7 @@
   const BAR_ID = 'robot-love-bar'
   const FETCH_TIMEOUT = 3000
   const MAX_BYTES = 10240
+  const CYCLE_MS = 4000
 
   async function getPersistentDismissed() {
     try {
@@ -21,7 +22,7 @@
     }
   }
 
-  function createBar(content, rawText) {
+  function createBar(paths, rawText) {
     const bar = document.createElement('div')
     bar.id = BAR_ID
     bar.style.cssText = `
@@ -31,11 +32,37 @@
       line-height: 1.5; padding: 8px 80px 8px 12px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       min-height: 32px; display: flex; align-items: center; gap: 8px;
+      cursor: ${paths.length > 1 ? 'pointer' : 'default'};
     `
 
     const text = document.createElement('span')
     text.style.cssText = `overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;`
-    text.textContent = content
+
+    let currentIndex = 0
+    let interval = null
+
+    function showPath(index) {
+      text.textContent = `Disallow: ${paths[index]}`
+    }
+
+    function startCycle() {
+      if (interval) clearInterval(interval)
+      if (paths.length < 2) { interval = null; return }
+      interval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % paths.length
+        showPath(currentIndex)
+      }, CYCLE_MS)
+    }
+
+    showPath(0)
+    startCycle()
+
+    bar.addEventListener('click', () => {
+      if (paths.length < 2) return
+      currentIndex = (currentIndex + 1) % paths.length
+      showPath(currentIndex)
+      startCycle()
+    })
 
     const link = document.createElement('a')
     link.textContent = '[raw]'
@@ -44,6 +71,7 @@
       font-size: 11px; cursor: pointer;
     `
     link.addEventListener('click', (e) => {
+      e.stopPropagation()
       e.preventDefault()
       const blob = new Blob([rawText], { type: 'text/plain' })
       const url = URL.createObjectURL(blob)
@@ -67,6 +95,7 @@
     close.addEventListener('click', (e) => {
       e.stopPropagation()
       SESSION_DISMISSED.add(origin)
+      if (interval) clearInterval(interval)
       bar.remove()
     })
 
@@ -119,8 +148,7 @@
 
       if (paths.length === 0) return null
 
-      const message = paths.join('  ·  ')
-      return { message, text }
+      return { paths, text }
     } catch {
       return null
     }
@@ -146,12 +174,12 @@
     const result = await fetchPost()
     if (!result) return
 
-    const bar = createBar(result.message, result.text)
+    const bar = createBar(result.paths, result.text)
     injectBar(bar)
     defendBar(bar)
 
     try {
-      await chrome.storage.local.set({ [`${COMMENTS_KEY}-${origin}`]: result.message })
+      await chrome.storage.local.set({ [`${COMMENTS_KEY}-${origin}`]: `Disallow: ${result.paths.join('  ·  ')}` })
       const stats = await chrome.storage.local.get(SESSION_STATS_KEY)
       const sites = stats[SESSION_STATS_KEY] || []
       if (!sites.includes(origin)) {
