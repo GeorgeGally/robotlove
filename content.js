@@ -26,7 +26,7 @@
     const bar = document.createElement('div')
     bar.id = BAR_ID
     bar.style.cssText = `
-      position: relative; width: 100%; background: #1a1a1a;
+      position: relative; width: 100vw; margin-left: calc(-50vw + 50%); background: #1a1a1a;
       color: #e0e0e0; font-family: 'Courier New', Courier, monospace;
       font-size: 13px; box-sizing: border-box; z-index: 2147483647;
       line-height: 1.5; padding: 8px 80px 8px 12px;
