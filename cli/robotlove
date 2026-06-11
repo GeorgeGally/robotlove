@@ -3,39 +3,67 @@ set -euo pipefail
 
 ROBOTS="/home/radarboy/radarboy.com/radarboy3000/robots.txt"
 
+slugify() {
+  echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-' | tr -s '-' | sed 's/^-//;s/-$//'
+}
+
+read_post() {
+  python3 - "$ROBOTS" <<'PYEOF'
+import sys, re
+path = sys.argv[1]
+try:
+    content = open(path).read()
+except Exception:
+    sys.exit(0)
+lines = content.split('\n')
+in_block = False
+paths = []
+for line in lines:
+    s = line.strip()
+    if re.match(r'^user-agent:\s*robotlove$', s, re.I):
+        in_block = True
+        continue
+    if not in_block:
+        continue
+    if re.match(r'^user-agent:', s, re.I):
+        break
+    if s == '' and paths:
+        break
+    if re.match(r'^disallow:', s, re.I):
+        p = s.split(':', 1)[1].strip()
+        if p:
+            paths.append(p)
+for p in paths:
+    print(p)
+PYEOF
+}
+
+write_post() {
+  python3 - "$ROBOTS" "$1" <<'PYEOF'
+import sys, re
+path, disallow = sys.argv[1], sys.argv[2]
+block = f'User-agent: Robotlove\nDisallow: {disallow}\n\n'
+try:
+    content = open(path).read()
+except FileNotFoundError:
+    print(f'Error: {path} not found', file=sys.stderr)
+    sys.exit(1)
+content = re.sub(r'(?i)User-agent:\s*Robotlove\n(?:Disallow:[^\n]*\n)*\n?', '', content)
+content = block + content.lstrip('\n')
+open(path, 'w').write(content)
+PYEOF
+}
+
 if [ $# -eq 0 ]; then
-  if command -v curl &>/dev/null; then
-    current=$(grep "^# 🤖" "$ROBOTS" 2>/dev/null | head -1 | sed 's/^# 🤖 //')
-    if [ -n "$current" ]; then
-      echo "🤖 $current"
-    else
-      echo "No post yet."
-    fi
+  result=$(read_post)
+  if [ -n "$result" ]; then
+    echo "🤖 $result"
   else
-    echo "Usage: robotlove \"your message\""
-    exit 1
+    echo "No post yet."
   fi
   exit 0
 fi
 
-MSG="# 🤖 $1"
-
-if grep -q "^# 🤖" "$ROBOTS" 2>/dev/null; then
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s|^# 🤖.*|$MSG|" "$ROBOTS"
-  else
-    sed -i "s|^# 🤖.*|$MSG|" "$ROBOTS"
-  fi
-else
-  if [ ! -f "$ROBOTS" ]; then
-    echo "Error: $ROBOTS not found"
-    exit 1
-  fi
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "1s|^|$MSG\n|" "$ROBOTS"
-  else
-    sed -i "1s|^|$MSG\n|" "$ROBOTS"
-  fi
-fi
-
-echo "🤖 posted: \"$1\""
+SLUG="/$(slugify "$1")/"
+write_post "$SLUG"
+echo "🤖 posted: $SLUG"
