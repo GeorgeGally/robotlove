@@ -30,6 +30,7 @@ load_robots_path() {
     fi
   done
   echo "Error: robots.txt not found. Run: robots setup /path/to/robots.txt" >&2
+  echo "       Or run: robots setup  (interactive prompt)" >&2
   exit 1
 }
 
@@ -74,7 +75,8 @@ import sys, re, os, tempfile, shutil
 path, disallow = sys.argv[1], sys.argv[2]
 block = f'User-agent: Robots\nDisallow: {disallow}\n\n'
 try:
-    content = open(path).read()
+    with open(path) as f:
+        content = f.read()
 except FileNotFoundError:
     print(f'Error: {path} not found', file=sys.stderr)
     sys.exit(1)
@@ -86,6 +88,7 @@ fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path))
 try:
     with os.fdopen(fd, 'w') as f:
         f.write(content)
+    os.chmod(tmp, 0o644)
     shutil.move(tmp, path)
 except Exception as e:
     if os.path.exists(tmp):
@@ -98,16 +101,20 @@ PYEOF
 # --- commands ---
 
 if [ "${1:-}" = "setup" ]; then
-  if [ $# -lt 2 ]; then
-    echo "Usage: robots setup /path/to/robots.txt" >&2
+  path="${2:-}"
+  if [ -z "$path" ]; then
+    read -r -p "robots.txt path: " path
+  fi
+  # if a directory was given, look for robots.txt inside it
+  if [ -d "$path" ]; then
+    path="${path%/}/robots.txt"
+  fi
+  if [ ! -f "$path" ]; then
+    echo "Error: $path not found" >&2
     exit 1
   fi
-  if [ ! -f "$2" ]; then
-    echo "Error: $2 not found" >&2
-    exit 1
-  fi
-  echo "ROBOTS=$2" > "$CONF"
-  echo "🤖 configured: $2"
+  echo "ROBOTS=$path" > "$CONF"
+  echo "🤖 configured: $path"
   exit 0
 fi
 
