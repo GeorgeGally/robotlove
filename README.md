@@ -138,7 +138,7 @@ robots/
   manifest.json   — chrome extension
   content.js      — extension content script
   popup.html/js   — extension popup
-  cli/robots   — bash posting tool
+  cli/robots       — bash posting tool
   server/         — optional daily generator (llm)
   index.html      — project page
   install.sh      — installs the cli tool
