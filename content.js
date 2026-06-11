@@ -33,10 +33,6 @@
       min-height: 32px; display: flex; align-items: center; gap: 8px;
     `
 
-    const prefix = document.createElement('span')
-    prefix.style.cssText = `color: #666; flex-shrink: 0;`
-    prefix.textContent = '#  '
-
     const text = document.createElement('span')
     text.style.cssText = `overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;`
     text.textContent = content
@@ -74,7 +70,6 @@
       bar.remove()
     })
 
-    bar.appendChild(prefix)
     bar.appendChild(text)
     bar.appendChild(link)
     bar.appendChild(close)
@@ -89,7 +84,7 @@
     return false
   }
 
-  async function fetchComments() {
+  async function fetchPost() {
     try {
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
@@ -102,12 +97,29 @@
       if (!response.ok) return null
 
       const text = (await response.text()).slice(0, MAX_BYTES)
-      const triggerLine = text.split('\n').find(l => l.trim().startsWith('# \u{1F916}'))
-      if (!triggerLine) return null
+      const lines = text.split('\n')
 
-      let message = triggerLine.replace(/^#\s*\u{1F916}\s*/, '').trim()
-      if (message.length > 280) message = message.slice(0, 277) + '...'
+      let inBlock = false
+      const paths = []
 
+      for (const line of lines) {
+        const stripped = line.trim()
+        if (/^user-agent:\s*robotlove$/i.test(stripped)) {
+          inBlock = true
+          continue
+        }
+        if (!inBlock) continue
+        if (/^user-agent:/i.test(stripped)) break
+        if (stripped === '' && paths.length > 0) break
+        if (/^disallow:/i.test(stripped)) {
+          const path = stripped.slice('Disallow:'.length).trim()
+          if (path) paths.push(path)
+        }
+      }
+
+      if (paths.length === 0) return null
+
+      const message = paths.join('  ·  ')
       return { message, text }
     } catch {
       return null
@@ -131,7 +143,7 @@
     const persistent = await getPersistentDismissed()
     if (persistent.includes(origin)) return
 
-    const result = await fetchComments()
+    const result = await fetchPost()
     if (!result) return
 
     const bar = createBar(result.message, result.text)

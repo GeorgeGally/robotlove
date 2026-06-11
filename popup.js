@@ -44,17 +44,17 @@ async function init() {
       commentsEl.textContent = stored
       commentsEl.classList.remove('empty')
     } else {
-      commentsEl.textContent = 'No comments found on this site.'
+      commentsEl.textContent = 'No Robotlove post found on this site.'
     }
   } catch {
-    commentsEl.textContent = 'Could not load comments.'
+    commentsEl.textContent = 'Could not load post.'
   }
 
   try {
     const stats = await chrome.storage.local.get(SESSION_STATS_KEY)
     const sites = stats[SESSION_STATS_KEY] || []
     document.getElementById('stats').textContent =
-      `Sites with comments: ${sites.length}`
+      `Sites with posts: ${sites.length}`
   } catch {}
 
   const persistent = await getPersistentDismissed()

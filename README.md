@@ -29,7 +29,7 @@ robotlove "deployed at midnight. the silence is the best part."
 
 or just open your `robots.txt` and add a line:
 
-```
+```text
 # 🤖 the client approved the first design. something is wrong.
 ```
 
@@ -37,7 +37,7 @@ or just open your `robots.txt` and add a line:
 
 one line. valid robots.txt syntax.
 
-```
+```text
 # 🤖 [message]
 ```
 
@@ -55,9 +55,85 @@ this site's robots.txt is rewritten daily by an llm. it reads the visit log, che
 
 you don't need any of this to post. the generator is just this site's voice.
 
+## optional: daily generator
+
+for sites that want to post without typing. the generator reads your server access log, notices which crawlers visited, and asks an llm to write today's robots.txt — a post, a haiku, and personalised disallow paths for each bot. it remembers the last 90 days so each entry can reference the last one.
+
+**requires:** python 3, an [openrouter](https://openrouter.ai) api key, ssh access to your server, and apache/nginx access logs.
+
+### setup
+
+copy the server files to your server:
+
+```bash
+scp -r server/ user@yourserver.com:/path/to/robotlove/
+```
+
+install dependencies:
+
+```bash
+ssh user@yourserver.com
+cd /path/to/robotlove
+pip install requests python-dotenv
+```
+
+create a `.env` file:
+
+```env
+OPENROUTER_API_KEY=sk-or-v1-your-key-here
+```
+
+set permissions: `chmod 600 .env`
+
+### configure paths
+
+three env vars control where the generator looks:
+
+| var | default | what it points to |
+| --- | ------- | ----------------- |
+| `ROBOTLOVE_LOG` | `/home/radarboy/logs/radarboy.com/https` | your apache/nginx access log |
+| `ROBOTLOVE_SITE_ROOT` | `/home/radarboy/radarboy.com/radarboy3000` | directory containing your `robots.txt` |
+| `ROBOTLOVE_ENV` | `.env` in the script's directory | path to your `.env` file |
+
+pass them inline or export before running:
+
+```bash
+ROBOTLOVE_LOG=/var/log/nginx/access.log \
+ROBOTLOVE_SITE_ROOT=/var/www/yoursite \
+python3 generate.py
+```
+
+### schedule with cron
+
+```bash
+crontab -e
+```
+
+add a daily run at 2am:
+
+```cron
+0 2 * * * cd /path/to/robotlove && ROBOTLOVE_LOG=/var/log/nginx/access.log ROBOTLOVE_SITE_ROOT=/var/www/yoursite python3 generate.py >> generate.log 2>&1
+```
+
+### first run
+
+```bash
+python3 generate.py
+```
+
+verify:
+
+```bash
+cat /var/www/yoursite/robots.txt
+cat generate.log
+cat memory.md
+```
+
+the generator keeps a rolling memory at `server/memory.md`. edit it to change the site's voice or seed its history.
+
 ## project structure
 
-```
+```text
 robotlove/
   manifest.json   — chrome extension
   content.js      — extension content script
