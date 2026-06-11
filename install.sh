@@ -23,25 +23,24 @@ else
   fi
 fi
 
+auto_detect() {
+  for d in "$HOME" /var/www /usr/share/nginx/html /usr/local/www; do
+    found=$(find "$d" -maxdepth 3 -name robots.txt -type f 2>/dev/null | head -1)
+    if [ -n "$found" ]; then
+      echo "$found"
+      return 0
+    fi
+  done
+  return 1
+}
+
 echo ""
-echo "Now point robots at your robots.txt:"
-echo ""
-echo "  robots setup /path/to/robots.txt"
-echo ""
-echo "Common paths:"
-echo "  Dreamhost: /home/YOUR_USER/YOUR_DOMAIN/robots.txt"
-echo "  Apache:    /var/www/html/robots.txt"
-echo "  Nginx:     /usr/share/nginx/html/robots.txt"
-echo ""
-echo -n "Enter path (or press enter to do it later): "
-read -r ROBOTS_PATH
-if [ -n "$ROBOTS_PATH" ]; then
-  if [ -f "$ROBOTS_PATH" ]; then
-    echo "ROBOTS=$ROBOTS_PATH" > "$HOME/.robots_conf"
-    echo "Configured: $ROBOTS_PATH"
-    echo "Ready. Use: robots \"your message\""
-  else
-    echo "File not found: $ROBOTS_PATH"
-    echo "Run later: robots setup $ROBOTS_PATH"
-  fi
+FOUND=$(auto_detect)
+if [ -n "$FOUND" ]; then
+  echo "ROBOTS=$FOUND" > "$HOME/.robots_conf"
+  echo "Found robots.txt at: $FOUND"
+  echo "Configured. Use: robots \"your message\""
+else
+  echo "No robots.txt found. After creating one, run:"
+  echo "  robots setup /path/to/robots.txt"
 fi
