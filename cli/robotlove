@@ -12,11 +12,10 @@ load_robots_path() {
   fi
   # auto-detect common locations
   for candidate in \
-    "$HOME/radarboy.com/radarboy3000/robots.txt" \
-    "$HOME/radarboy.com/robots.txt" \
     "$HOME/public_html/robots.txt" \
     "$HOME/www/robots.txt" \
-    "/var/www/html/robots.txt"; do
+    "/var/www/html/robots.txt" \
+    "/var/www/robots.txt"; do
     if [ -f "$candidate" ]; then
       ROBOTS="$candidate"
       return 0
