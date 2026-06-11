@@ -146,7 +146,19 @@ if [ "${1:-}" = "update" ]; then
   DEST=$(command -v robots 2>/dev/null || echo "$HOME/bin/robots")
   cp cli/robots "$DEST"
   chmod +x "$DEST"
-  echo "🤖 updated."
+  echo ""
+  echo "      .-----------."
+  echo "     /    ROBOTS   \\"
+  echo "    |  [ 0   0 ]   |"
+  echo "    |    [___]     |"
+  echo "    |   [_____]    |"
+  echo "     \\___________/"
+  echo "      |    |    |"
+  echo "     /|    |    |\\"
+  echo "    / |    |    | \\"
+  echo "   /__|____|____|__\\"
+  echo ""
+  echo "  updated $DEST"
   exit 0
 fi
 

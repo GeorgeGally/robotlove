@@ -4,24 +4,44 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "$DIR" > "$HOME/.robots_repo"
 
+ROBOT=$(cat <<'ROBOT_EOF'
+      .-----------.
+     /    ROBOTS   \
+    |  [ 0   0 ]   |
+    |    [___]     |
+    |   [_____]    |
+     \___________/
+      |    |    |
+     /|    |    |\
+    / |    |    | \
+   /__|____|____|__\
+ROBOT_EOF
+)
+
 install_cli() {
   local dest="$1"
   cp "$DIR/cli/robots" "$dest"
   chmod +x "$dest"
-  echo "Installed to $dest"
 }
 
 if cp "$DIR/cli/robots" /usr/local/bin/robots 2>/dev/null; then
   install_cli /usr/local/bin/robots
+  DEST="/usr/local/bin/robots"
 else
   mkdir -p "$HOME/bin"
   install_cli "$HOME/bin/robots"
+  DEST="$HOME/bin/robots"
   if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/bin"; then
     touch "$HOME/.bashrc"
     echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"
     export PATH="$PATH:$HOME/bin"
   fi
 fi
+
+echo "$ROBOT"
+echo ""
+echo "  robots installed to $DEST"
+echo ""
 
 auto_detect() {
   for d in "$HOME" /var/www /usr/share/nginx/html /usr/local/www; do
@@ -34,13 +54,16 @@ auto_detect() {
   return 1
 }
 
-echo ""
 FOUND=$(auto_detect)
 if [ -n "$FOUND" ]; then
   echo "ROBOTS=$FOUND" > "$HOME/.robots_conf"
-  echo "Found robots.txt at: $FOUND"
-  echo "Configured. Use: robots \"your message\""
+  echo "  found robots.txt at: $FOUND"
+  echo ""
+  echo "  robots \"your message here\""
 else
-  echo "No robots.txt found. After creating one, run:"
+  echo "  no robots.txt found."
+  echo ""
   echo "  robots setup /path/to/robots.txt"
 fi
+echo ""
+echo "  robots update   — pull latest version"
