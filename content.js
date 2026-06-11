@@ -26,7 +26,7 @@
     const bar = document.createElement('div')
     bar.id = BAR_ID
     bar.style.cssText = `
-      position: relative; width: 100vw; margin-left: calc(-50vw + 50%); background: #1a1a1a;
+      position: fixed; top: 0; left: 0; width: 100%; background: #1a1a1a;
       color: #e0e0e0; font-family: 'Courier New', Courier, monospace;
       font-size: 13px; box-sizing: border-box; z-index: 2147483647;
       line-height: 1.5; padding: 8px 80px 8px 12px;
@@ -34,6 +34,10 @@
       min-height: 32px; display: flex; align-items: center; gap: 8px;
       cursor: ${paths.length > 1 ? 'pointer' : 'default'};
     `
+
+    bar.spacer = document.createElement('div')
+    bar.spacer.id = BAR_ID + '-spacer'
+    bar.spacer.style.cssText = `height: 40px;`
 
     const text = document.createElement('span')
     text.style.cssText = `overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;`
@@ -96,6 +100,7 @@
       e.stopPropagation()
       SESSION_DISMISSED.add(origin)
       if (interval) clearInterval(interval)
+      if (bar.spacer) bar.spacer.remove()
       bar.remove()
     })
 
@@ -107,7 +112,8 @@
 
   function injectBar(bar) {
     if (document.body) {
-      document.body.insertBefore(bar, document.body.firstChild)
+      document.body.insertBefore(bar.spacer, document.body.firstChild)
+      document.body.insertBefore(bar, bar.spacer)
       return true
     }
     return false
@@ -162,7 +168,8 @@
   function defendBar(bar) {
     const observer = new MutationObserver(() => {
       if (!isAttached(bar) && document.body) {
-        document.body.insertBefore(bar, document.body.firstChild)
+        document.body.insertBefore(bar.spacer, document.body.firstChild)
+        document.body.insertBefore(bar, bar.spacer)
       }
     })
     observer.observe(document.body, { childList: true })
