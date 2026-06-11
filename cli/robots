@@ -204,12 +204,14 @@ fi
 load_robots_path
 
 if [ $# -eq 0 ]; then
-  result=$(read_post "$ROBOTS")
-  if [ -n "$result" ]; then
-    echo "🤖 $result"
-  else
-    echo "No post yet."
+  read -r -p "disallow: " input
+  if [ -z "$input" ]; then
+    echo "Nothing posted."
+    exit 0
   fi
+  SLUG="/$(slugify "$input")/"
+  write_post "$ROBOTS" "$SLUG"
+  echo "🤖 posted: $SLUG"
   exit 0
 fi
 
