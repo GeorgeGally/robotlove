@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-CONF="$HOME/.robotlove_conf"
+CONF="$HOME/.robots_conf"
 
 load_robots_path() {
   if [ -f "$CONF" ]; then
@@ -21,7 +21,7 @@ load_robots_path() {
       return 0
     fi
   done
-  echo "Error: robots.txt not found. Run: robotlove setup /path/to/robots.txt" >&2
+  echo "Error: robots.txt not found. Run: robots setup /path/to/robots.txt" >&2
   exit 1
 }
 
@@ -42,7 +42,7 @@ in_block = False
 paths = []
 for line in lines:
     s = line.strip()
-    if re.match(r'^user-agent:\s*robotlove$', s, re.I):
+    if re.match(r'^user-agent:\s*robots$', s, re.I):
         in_block = True
         continue
     if not in_block:
@@ -64,14 +64,14 @@ write_post() {
   python3 - "$1" "$2" <<'PYEOF'
 import sys, re, os, tempfile, shutil
 path, disallow = sys.argv[1], sys.argv[2]
-block = f'User-agent: Robotlove\nDisallow: {disallow}\n\n'
+block = f'User-agent: Robots\nDisallow: {disallow}\n\n'
 try:
     content = open(path).read()
 except FileNotFoundError:
     print(f'Error: {path} not found', file=sys.stderr)
     sys.exit(1)
 # remove existing Robotlove block, preserve everything else
-content = re.sub(r'(?i)User-agent:\s*Robotlove\n(?:Disallow:[^\n]*\n)*\n?', '', content)
+content = re.sub(r'(?i)User-agent:\s*Robots\n(?:Disallow:[^\n]*\n)*\n?', '', content)
 content = block + content.lstrip('\n')
 # atomic write
 fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path))
@@ -91,7 +91,7 @@ PYEOF
 
 if [ "${1:-}" = "setup" ]; then
   if [ $# -lt 2 ]; then
-    echo "Usage: robotlove setup /path/to/robots.txt" >&2
+    echo "Usage: robots setup /path/to/robots.txt" >&2
     exit 1
   fi
   if [ ! -f "$2" ]; then
@@ -104,9 +104,9 @@ if [ "${1:-}" = "setup" ]; then
 fi
 
 if [ "${1:-}" = "update" ]; then
-  REPO_FILE="$HOME/.robotlove_repo"
+  REPO_FILE="$HOME/.robots_repo"
   if [ ! -f "$REPO_FILE" ]; then
-    echo "Error: repo path not saved. Re-run install.sh from the robotlove directory." >&2
+    echo "Error: repo path not saved. Re-run install.sh from the robots directory." >&2
     exit 1
   fi
   REPO=$(cat "$REPO_FILE")
@@ -116,8 +116,8 @@ if [ "${1:-}" = "update" ]; then
   fi
   cd "$REPO"
   git pull
-  DEST=$(command -v robotlove 2>/dev/null || echo "$HOME/bin/robotlove")
-  cp cli/robotlove "$DEST"
+  DEST=$(command -v robots 2>/dev/null || echo "$HOME/bin/robots")
+  cp cli/robots "$DEST"
   chmod +x "$DEST"
   echo "🤖 updated."
   exit 0

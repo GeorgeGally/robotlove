@@ -15,10 +15,10 @@ from prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
 
 BASE_DIR = Path(__file__).parent.resolve()
 
-ENV_PATH = os.environ.get("ROBOTLOVE_ENV", BASE_DIR / ".env")
-LOG_PATH = os.environ.get("ROBOTLOVE_LOG", "/home/radarboy/logs/radarboy.com/https")
+ENV_PATH = os.environ.get("ROBOTS_ENV", BASE_DIR / ".env")
+LOG_PATH = os.environ.get("ROBOTS_LOG", "/home/radarboy/logs/radarboy.com/https")
 SITE_ROOT = os.environ.get(
-    "ROBOTLOVE_SITE_ROOT",
+    "ROBOTS_SITE_ROOT",
     "/home/radarboy/radarboy.com/radarboy3000",
 )
 MEMORY_PATH = BASE_DIR / "memory.md"
@@ -102,7 +102,7 @@ def call_llm(api_key, user_prompt):
                     "Authorization": f"Bearer {api_key}",
                     "Content-Type": "application/json",
                     "HTTP-Referer": "https://radarboy3000.com",
-                    "X-Title": "Robot Love",
+                    "X-Title": "Robots",
                 },
                 json={
                     "model": "openrouter/free",

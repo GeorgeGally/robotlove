@@ -104,7 +104,7 @@
 
       for (const line of lines) {
         const stripped = line.trim()
-        if (/^user-agent:\s*robotlove$/i.test(stripped)) {
+        if (/^user-agent:\s*robots$/i.test(stripped)) {
           inBlock = true
           continue
         }

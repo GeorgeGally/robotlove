@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Robot Love",
+  "name": "Robots",
   "version": "0.1",
   "description": "Reads what websites write to robots.",
   "permissions": ["storage", "activeTab"],
@@ -12,6 +12,6 @@
   }],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Robot Love"
+    "default_title": "Robots"
   }
 }
