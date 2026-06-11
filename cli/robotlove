@@ -1,14 +1,37 @@
 #!/bin/bash
 set -euo pipefail
 
-ROBOTS="/home/radarboy/radarboy.com/radarboy3000/robots.txt"
+CONF="$HOME/.robotlove_conf"
+
+load_robots_path() {
+  if [ -f "$CONF" ]; then
+    ROBOTS=$(grep '^ROBOTS=' "$CONF" | head -1 | cut -d= -f2-)
+    if [ -n "$ROBOTS" ] && [ -f "$ROBOTS" ]; then
+      return 0
+    fi
+  fi
+  # auto-detect common locations
+  for candidate in \
+    "$HOME/radarboy.com/radarboy3000/robots.txt" \
+    "$HOME/radarboy.com/robots.txt" \
+    "$HOME/public_html/robots.txt" \
+    "$HOME/www/robots.txt" \
+    "/var/www/html/robots.txt"; do
+    if [ -f "$candidate" ]; then
+      ROBOTS="$candidate"
+      return 0
+    fi
+  done
+  echo "Error: robots.txt not found. Run: robotlove setup /path/to/robots.txt" >&2
+  exit 1
+}
 
 slugify() {
   echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-' | tr -s '-' | sed 's/^-//;s/-$//'
 }
 
 read_post() {
-  python3 - "$ROBOTS" <<'PYEOF'
+  python3 - "$1" <<'PYEOF'
 import sys, re
 path = sys.argv[1]
 try:
@@ -39,8 +62,8 @@ PYEOF
 }
 
 write_post() {
-  python3 - "$ROBOTS" "$1" <<'PYEOF'
-import sys, re
+  python3 - "$1" "$2" <<'PYEOF'
+import sys, re, os, tempfile, shutil
 path, disallow = sys.argv[1], sys.argv[2]
 block = f'User-agent: Robotlove\nDisallow: {disallow}\n\n'
 try:
@@ -48,11 +71,38 @@ try:
 except FileNotFoundError:
     print(f'Error: {path} not found', file=sys.stderr)
     sys.exit(1)
+# remove existing Robotlove block, preserve everything else
 content = re.sub(r'(?i)User-agent:\s*Robotlove\n(?:Disallow:[^\n]*\n)*\n?', '', content)
 content = block + content.lstrip('\n')
-open(path, 'w').write(content)
+# atomic write
+fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path))
+try:
+    with os.fdopen(fd, 'w') as f:
+        f.write(content)
+    shutil.move(tmp, path)
+except Exception as e:
+    if os.path.exists(tmp):
+        os.unlink(tmp)
+    print(f'Error writing: {e}', file=sys.stderr)
+    sys.exit(1)
 PYEOF
 }
+
+# --- commands ---
+
+if [ "${1:-}" = "setup" ]; then
+  if [ $# -lt 2 ]; then
+    echo "Usage: robotlove setup /path/to/robots.txt" >&2
+    exit 1
+  fi
+  if [ ! -f "$2" ]; then
+    echo "Error: $2 not found" >&2
+    exit 1
+  fi
+  echo "ROBOTS=$2" > "$CONF"
+  echo "🤖 configured: $2"
+  exit 0
+fi
 
 if [ "${1:-}" = "update" ]; then
   REPO_FILE="$HOME/.robotlove_repo"
@@ -74,8 +124,10 @@ if [ "${1:-}" = "update" ]; then
   exit 0
 fi
 
+load_robots_path
+
 if [ $# -eq 0 ]; then
-  result=$(read_post)
+  result=$(read_post "$ROBOTS")
   if [ -n "$result" ]; then
     echo "🤖 $result"
   else
@@ -85,5 +137,5 @@ if [ $# -eq 0 ]; then
 fi
 
 SLUG="/$(slugify "$1")/"
-write_post "$SLUG"
+write_post "$ROBOTS" "$SLUG"
 echo "🤖 posted: $SLUG"
