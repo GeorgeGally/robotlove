@@ -4,23 +4,39 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "$DIR" > "$HOME/.robots_repo"
 
-cp "$DIR/cli/robots" /usr/local/bin/robots 2>/dev/null && chmod +x /usr/local/bin/robots && echo "Installed. Usage: robots \"your message\"" && exit 0
+install_cli() {
+  local dest="$1"
+  cp "$DIR/cli/robots" "$dest"
+  chmod +x "$dest"
+  echo "Installed to $dest"
+}
 
-for dir in "$HOME/.local/bin" "$HOME/bin"; do
-  if echo "$PATH" | tr ':' '\n' | grep -qx "$dir"; then
-    mkdir -p "$dir"
-    cp "$DIR/cli/robots" "$dir/robots"
-    chmod +x "$dir/robots"
-    echo "Installed. Usage: robots \"your message\""
-    exit 0
+if cp "$DIR/cli/robots" /usr/local/bin/robots 2>/dev/null; then
+  install_cli /usr/local/bin/robots
+else
+  mkdir -p "$HOME/bin"
+  install_cli "$HOME/bin/robots"
+  if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/bin"; then
+    touch "$HOME/.bashrc"
+    echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"
+    export PATH="$PATH:$HOME/bin"
   fi
-done
+fi
 
-mkdir -p "$HOME/bin"
-cp "$DIR/cli/robots" "$HOME/bin/robots"
-chmod +x "$HOME/bin/robots"
-touch "$HOME/.bashrc"
-echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"
-export PATH="$PATH:$HOME/bin"
-echo "Installed. Usage: robots \"your message\""
-exec "$SHELL"
+echo ""
+echo "Now point robots at your robots.txt:"
+echo ""
+echo "  robots setup /path/to/robots.txt"
+echo ""
+echo -n "Enter path (or press enter to do it later): "
+read -r ROBOTS_PATH
+if [ -n "$ROBOTS_PATH" ]; then
+  if [ -f "$ROBOTS_PATH" ]; then
+    echo "ROBOTS=$ROBOTS_PATH" > "$HOME/.robots_conf"
+    echo "Configured: $ROBOTS_PATH"
+    echo "Ready. Use: robots \"your message\""
+  else
+    echo "File not found: $ROBOTS_PATH"
+    echo "Run later: robots setup $ROBOTS_PATH"
+  fi
+fi

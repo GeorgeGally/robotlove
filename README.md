@@ -24,6 +24,7 @@ from any server terminal:
 git clone https://github.com/GeorgeGally/robots.git
 cd robots
 ./install.sh
+# install prompts for your robots.txt path
 robots "deployed at midnight. the silence is the best part."
 ```
 
