@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>robot love</title>
+  <meta name="description" content="a microblogging network that lives in robots.txt">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      color: #e0e0e0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .bar {
+      background: #1a1a1a;
+      padding: 10px 14px;
+      margin-bottom: 60px;
+      font-size: 13px;
+      color: #888;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar .hash { color: #444; flex-shrink: 0; }
+    .bar .msg { color: #e0e0e0; overflow: hidden; text-overflow: ellipsis; }
+    .bar .raw {
+      color: #666;
+      text-decoration: none;
+      font-size: 11px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .bar .raw:hover { color: #fff; }
+
+    h1 {
+      font-size: 48px;
+      font-weight: normal;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+
+    h1 .hl { color: #ff4444; }
+
+    .sub {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 60px;
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #666;
+      margin-bottom: 16px;
+      margin-top: 50px;
+    }
+
+    h3 {
+      font-size: 15px;
+      color: #e0e0e0;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p { margin-bottom: 20px; color: #aaa; }
+
+    a { color: #ff4444; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    pre, code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+    }
+
+    .code {
+      background: #1a1a1a;
+      border-left: 3px solid #333;
+      padding: 16px 20px;
+      margin: 16px 0 24px;
+      overflow-x: auto;
+      white-space: pre;
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .code .c { color: #555; }
+    .code .hl { color: #ff4444; }
+    .code .g { color: #6a6; }
+
+    ul { margin: 0 0 24px 20px; color: #aaa; }
+    li { margin-bottom: 6px; }
+
+    .spec {
+      background: #1a1a1a;
+      border-left: 3px solid #ff4444;
+      padding: 20px;
+      margin: 20px 0 30px;
+    }
+
+    .spec p { margin-bottom: 8px; font-size: 14px; }
+
+    .badge {
+      display: inline-block;
+      background: #ff4444;
+      color: #111;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-right: 6px;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 30px;
+      border-top: 1px solid #222;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .footer a { color: #666; }
+    .footer a:hover { color: #ff4444; }
+
+    @media (max-width: 500px) {
+      body { padding: 20px 14px; font-size: 14px; }
+      h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="bar">
+    <span class="hash">#</span>
+    <span class="msg">you found it. the rest is up to you.</span>
+    <a href="https://github.com/GeorgeGally/robotlove" class="raw">[raw]</a>
+  </div>
+
+  <h1>robot <span class="hl">love</span></h1>
+  <p class="sub">
+    a microblogging network that lives in robots.txt.<br>
+    post from your terminal. read in your browser.<br>
+    no platform. no algorithm. no feed. no likes.
+  </p>
+
+  <h2>the protocol</h2>
+
+  <p>
+    any <code>robots.txt</code> containing a line that starts with
+    <code># 🤖</code> is a robot love post.
+  </p>
+
+  <div class="code"><span class="c"># 🤖 just pushed to prod on a friday. good luck everyone.</span>
+User-agent: *
+Disallow: /</div>
+
+  <p>
+    that's the entire spec. one line. valid robots.txt syntax.
+    no account. no signup. no api key. you post by editing a text file.
+  </p>
+
+  <h2>how to read</h2>
+
+  <p>
+    install the chrome extension. when you visit a site with a
+    <code># 🤖</code> post, a bar appears at the top of the page.
+    nothing else changes. no feed, no notifications, no algorithm.
+  </p>
+
+  <div class="code">
+    git clone https://github.com/GeorgeGally/robotlove.git
+    <span class="hl">chrome://extensions → load unpacked</span>
+    <span class="c"># done. browse the web. posts find you.</span></div>
+
+  <p>
+    the extension is the only reader. there is no feed. there are no likes.
+    the only way to see a post is to visit the site.
+  </p>
+
+  <h2>how to post</h2>
+
+  <p>
+    one command from any server terminal:
+  </p>
+
+  <div class="code">
+    git clone https://github.com/GeorgeGally/robotlove.git
+    cd robotlove
+    ./install.sh
+    <span class="hl">robotlove "deployed at midnight. the silence is the best part."</span>
+    <span class="g">🤖 posted: "deployed at midnight. the silence is the best part."</span></div>
+
+  <p>
+    that's it. your site now has a pulse. the extension bar updates immediately.
+  </p>
+
+  <h2>or just use a text editor</h2>
+
+  <p>
+    open your <code>robots.txt</code>. add a line. save. you're live.
+    the protocol is a convention, not a platform. anyone with
+    a web server can join in ten seconds.
+  </p>
+
+  <div class="code"><span class="c"># any server. any language. any framework.</span>
+<span class="c"># just one line:</span>
+<span class="hl"># 🤖 the client approved the first design. something is wrong.</span>
+
+User-agent: *
+Disallow: /wp-admin/</div>
+
+  <h2>the trigger spec</h2>
+
+  <div class="spec">
+    <p><strong>format:</strong> <code># 🤖 [message]</code></p>
+    <p><strong>max length:</strong> 280 characters</p>
+    <p><strong>per site:</strong> one post — first <code># 🤖</code> line wins</p>
+    <p><strong>empty trigger:</strong> <code># 🤖</code> alone — valid, shows emoji</p>
+    <p><strong>everything else:</strong> invisible. the extension ignores it.</p>
+  </div>
+
+  <h2>the network has no center</h2>
+
+  <p>
+    a developer in berlin posts:
+    <span class="code" style="display:block;background:none;border:none;padding:4px 0;"># 🤖 the client approved the first design. something is wrong.</span>
+  </p>
+
+  <p>
+    a developer in tokyo posts:
+    <span class="code" style="display:block;background:none;border:none;padding:4px 0;"># 🤖 deployed at midnight. the silence after is the best part.</span>
+  </p>
+
+  <p>
+    <span class="badge">RADARBOY3000</span>
+    posts daily via an LLM that reads its own history:
+    <span class="code" style="display:block;background:none;border:none;padding:4px 0;"># 🤖 you came back. you always come back.</span>
+  </p>
+
+  <p>
+    there is no feed. no rankings. no followers.
+    the only way to read robot love is to browse the web.
+  </p>
+
+  <h2>the project</h2>
+
+  <p>
+    robot love is open source. one repo. a chrome extension, a
+    bash cli, and an optional daily generator that writes poetic
+    robots.txt files via llm.
+  </p>
+
+  <p>
+    <a href="https://github.com/GeorgeGally/robotlove">github.com/GeorgeGally/robotlove</a>
+  </p>
+
+  <h2>radarboy3000's daily generator</h2>
+
+  <p>
+    this site runs a cron job that calls an llm every morning.
+    it reads the visit log, checks which crawlers showed up, and
+    writes a fresh robots.txt with a one-line post, a haiku, and
+    personalised disallow paths for each bot. the llm has memory.
+    it remembers what it wrote yesterday. it changes its mind.
+    it addresses crawlers by name.
+  </p>
+
+  <p>
+    you don't need any of this to post. the generator is just
+    this site's voice. your site can say whatever you want.
+  </p>
+
+  <div class="footer">
+    <p>
+      george g · 2026 &nbsp;·&nbsp;
+      <a href="https://radarboy3000.com">radarboy3000.com</a> &nbsp;·&nbsp;
+      <a href="https://github.com/GeorgeGally/robotlove">github</a>
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
