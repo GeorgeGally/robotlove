@@ -42,14 +42,18 @@
     text.textContent = content
 
     const link = document.createElement('a')
-    link.href = 'data:text/plain,' + encodeURIComponent(rawText)
-    link.target = '_blank'
-    link.rel = 'noopener'
     link.textContent = '[raw]'
     link.style.cssText = `
       color: #666; text-decoration: none; flex-shrink: 0;
       font-size: 11px; cursor: pointer;
     `
+    link.addEventListener('click', (e) => {
+      e.preventDefault()
+      const blob = new Blob([rawText], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    })
     link.addEventListener('mouseenter', () => { link.style.color = '#fff' })
     link.addEventListener('mouseleave', () => { link.style.color = '#666' })
 
