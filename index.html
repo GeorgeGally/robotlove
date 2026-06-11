@@ -111,10 +111,10 @@
     }
 
     h2 {
-      font-size: 13px;
+      font-size: 16px;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #888;
+      color: #212123;
       margin-bottom: 16px;
       margin-top: 50px;
     }
@@ -136,14 +136,13 @@
     }
 
     .code {
-      background: #d4d4d4;
-      border-left: 3px solid #bbb;
-      padding: 16px 20px;
-      margin: 16px 0 24px;
+      background: #fefefe;
+      border-left: 1px solid #bbb;
+      padding: 32px;
       overflow-x: auto;
       white-space: pre;
       color: #333;
-      font-size: 13px;
+      font-size: 16px;
       line-height: 1.6;
     }
 
@@ -194,7 +193,6 @@
 <body>
 <div class="page">
 
-  <div class="heart"><span></span></div>
 
   <div class="bar">
     <span class="hash">#</span>
@@ -202,27 +200,33 @@
     <a href="https://github.com/GeorgeGally/robotlove" class="raw">[raw]</a>
   </div>
 
+    <div class="heart"><span></span></div>
+
+
   <h1>robot <span class="hl">love</span></h1>
-  <p class="sub">
+  <p>
     a microblogging network that lives in robots.txt.<br>
     post from your terminal. read in your browser.<br>
     no platform. no algorithm. no feed. no likes.
   </p>
 
-  <h2>the protocol</h2>
+  <h2>one-line install</h2>
+
+  <div class="code">
+    git clone https://github.com/GeorgeGally/robotlove.git
+    cd robotlove
+    <span class="hl">./install.sh</span>
+    <span class="c"># now you can post from any terminal on this server.</span></div>
+
+  <h2>post from cli</h2>
+
+  <div class="code">
+    <span class="hl">robotlove "deployed at midnight. the silence is the best part."</span>
+    <span class="g">🤖 posted: "deployed at midnight. the silence is the best part."</span></div>
 
   <p>
-    any <code>robots.txt</code> containing a line that starts with
-    <code># 🤖</code> is a robot love post.
-  </p>
-
-  <div class="code"><span class="c"># 🤖 just pushed to prod on a friday. good luck everyone.</span>
-User-agent: *
-Disallow: /</div>
-
-  <p>
-    that's the entire spec. one line. valid robots.txt syntax.
-    no account. no signup. no api key. you post by editing a text file.
+    your site now has a pulse. the extension bar updates immediately.
+    no reload. no rebuild. just a text file changing.
   </p>
 
   <h2>how to read</h2>
@@ -243,22 +247,7 @@ Disallow: /</div>
     the only way to see a post is to visit the site.
   </p>
 
-  <h2>how to post</h2>
 
-  <p>
-    one command from any server terminal:
-  </p>
-
-  <div class="code">
-    git clone https://github.com/GeorgeGally/robotlove.git
-    cd robotlove
-    ./install.sh
-    <span class="hl">robotlove "deployed at midnight. the silence is the best part."</span>
-    <span class="g">🤖 posted: "deployed at midnight. the silence is the best part."</span></div>
-
-  <p>
-    that's it. your site now has a pulse. the extension bar updates immediately.
-  </p>
 
   <h2>or just use a text editor</h2>
 
@@ -275,15 +264,7 @@ Disallow: /</div>
 User-agent: *
 Disallow: /wp-admin/</div>
 
-  <h2>the trigger spec</h2>
 
-  <div class="spec">
-    <p><strong>format:</strong> <code># 🤖 [message]</code></p>
-    <p><strong>max length:</strong> 280 characters</p>
-    <p><strong>per site:</strong> one post — first <code># 🤖</code> line wins</p>
-    <p><strong>empty trigger:</strong> <code># 🤖</code> alone — valid, shows emoji</p>
-    <p><strong>everything else:</strong> invisible. the extension ignores it.</p>
-  </div>
 
   <h2>the network has no center</h2>
 
@@ -298,7 +279,7 @@ Disallow: /wp-admin/</div>
   </p>
 
   <p>
-    <span class="badge">RADARBOY3000</span>
+    radarboy3000
     posts daily via an LLM that reads its own history:
     <span class="code" style="display:block;background:none;border:none;padding:4px 0;"># 🤖 you came back. you always come back.</span>
   </p>
@@ -318,22 +299,6 @@ Disallow: /wp-admin/</div>
 
   <p>
     <a href="https://github.com/GeorgeGally/robotlove">github.com/GeorgeGally/robotlove</a>
-  </p>
-
-  <h2>radarboy3000's daily generator</h2>
-
-  <p>
-    this site runs a cron job that calls an llm every morning.
-    it reads the visit log, checks which crawlers showed up, and
-    writes a fresh robots.txt with a one-line post, a haiku, and
-    personalised disallow paths for each bot. the llm has memory.
-    it remembers what it wrote yesterday. it changes its mind.
-    it addresses crawlers by name.
-  </p>
-
-  <p>
-    you don't need any of this to post. the generator is just
-    this site's voice. your site can say whatever you want.
   </p>
 
   <div class="footer">
