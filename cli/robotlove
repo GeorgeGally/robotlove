@@ -54,6 +54,26 @@ open(path, 'w').write(content)
 PYEOF
 }
 
+if [ "${1:-}" = "update" ]; then
+  REPO_FILE="$HOME/.robotlove_repo"
+  if [ ! -f "$REPO_FILE" ]; then
+    echo "Error: repo path not saved. Re-run install.sh from the robotlove directory." >&2
+    exit 1
+  fi
+  REPO=$(cat "$REPO_FILE")
+  if [ ! -d "$REPO/.git" ]; then
+    echo "Error: $REPO is not a git repo. Re-clone and run install.sh." >&2
+    exit 1
+  fi
+  cd "$REPO"
+  git pull
+  DEST=$(command -v robotlove 2>/dev/null || echo "$HOME/bin/robotlove")
+  cp cli/robotlove "$DEST"
+  chmod +x "$DEST"
+  echo "🤖 updated."
+  exit 0
+fi
+
 if [ $# -eq 0 ]; then
   result=$(read_post)
   if [ -n "$result" ]; then

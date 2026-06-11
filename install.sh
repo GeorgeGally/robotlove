@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+echo "$(pwd)" > "$HOME/.robotlove_repo"
+
 cp cli/robotlove /usr/local/bin/robotlove 2>/dev/null && chmod +x /usr/local/bin/robotlove && echo "Installed. Usage: robotlove \"your message\"" && exit 0
 
 for dir in "$HOME/.local/bin" "$HOME/bin"; do
