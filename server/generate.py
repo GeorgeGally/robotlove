@@ -1,0 +1,277 @@
+import os
+import re
+import sys
+import json
+import tempfile
+import shutil
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import requests
+from dotenv import load_dotenv
+
+from known_bots import BOTS, BOT_NAMES
+from prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
+
+BASE_DIR = Path(__file__).parent.resolve()
+
+ENV_PATH = os.environ.get("ROBOTLOVE_ENV", BASE_DIR / ".env")
+LOG_PATH = os.environ.get("ROBOTLOVE_LOG", "/home/radarboy/logs/radarboy.com/https")
+SITE_ROOT = os.environ.get(
+    "ROBOTLOVE_SITE_ROOT",
+    "/home/radarboy/radarboy.com/radarboy3000",
+)
+MEMORY_PATH = BASE_DIR / "memory.md"
+GENERATE_LOG = BASE_DIR / "generate.log"
+TODAY = datetime.now().strftime("%Y-%m-%d")
+YESTERDAY = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+def load_env():
+    load_dotenv(ENV_PATH)
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        raise SystemExit("OPENROUTER_API_KEY not found in .env")
+    return api_key
+
+
+def read_memory():
+    path = MEMORY_PATH
+    if not path.exists():
+        return ""
+
+    text = path.read_text()
+    entries = text.strip().split("\n---\n")
+    last_30 = entries[-30:]
+    return "\n---\n".join(last_30)
+
+
+KNOWN_USER_AGENTS = {
+    "GPTBot": "GPTBot",
+    "CCBot": "CCBot",
+    "archive.org_bot": "archive.org",
+    "Googlebot": "Googlebot",
+    "ClaudeBot": "ClaudeBot",
+    "Bingbot": "bingbot",
+}
+
+
+def parse_logs():
+    log_file = Path(LOG_PATH)
+    if not log_file.exists():
+        return ""
+
+    yesterday_str = YESTERDAY
+    counts = {name: 0 for name in BOT_NAMES}
+
+    try:
+        text = log_file.read_text(errors="replace")
+    except Exception:
+        return ""
+
+    for line in text.split("\n"):
+        if yesterday_str not in line:
+            continue
+        for name, agent in KNOWN_USER_AGENTS.items():
+            if agent.lower() in line.lower():
+                counts[name] = counts.get(name, 0) + 1
+
+    seen = [(name, count) for name, count in counts.items() if count > 0]
+    if not seen:
+        return ""
+
+    return ", ".join(f"{name}: {count} visit{'s' if count != 1 else ''}" for name, count in seen)
+
+
+def build_bot_registry_text():
+    parts = []
+    for name, info in BOTS.items():
+        parts.append(
+            f"{name} — owner: {info['owner']}, intent: {info['intent']}, "
+            f"relationship: {info['relationship']}, tone: {info['tone']}"
+        )
+    return "\n".join(parts)
+
+
+def call_llm(api_key, user_prompt):
+    for attempt in range(3):
+        try:
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://radarboy3000.com",
+                    "X-Title": "Robot Love",
+                },
+                json={
+                    "model": "openrouter/free",
+                    "messages": [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "temperature": 0.8,
+                    "max_tokens": 600,
+                },
+                timeout=60,
+            )
+            response.raise_for_status()
+            content = response.json()["choices"][0]["message"]["content"]
+            if content and content.strip():
+                return content.strip()
+        except Exception:
+            if attempt == 2:
+                raise
+    raise RuntimeError("LLM returned empty content")
+
+
+def validate_output(content):
+    lines = content.strip().split("\n")
+    if not lines:
+        return False
+    if not lines[0].startswith("#"):
+        return False
+    has_user_agent = any(line.strip().startswith("User-agent:") for line in lines)
+    has_disallow = any(line.strip().startswith("Disallow:") for line in lines)
+    return has_user_agent and has_disallow
+
+
+def write_robots_txt(content):
+    robots_path = Path(SITE_ROOT) / "robots.txt"
+    robots_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fd, tmp_path = tempfile.mkstemp(dir=robots_path.parent, prefix="robots.tmp.")
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write(content)
+        os.chmod(tmp_path, 0o644)
+        shutil.move(tmp_path, robots_path)
+    except Exception:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+        raise
+
+
+def parse_generated_content(content):
+    lines = content.strip().split("\n")
+
+    bar = ""
+    haiku = []
+    disallows = []
+    crawlers_seen = set()
+    state = "bar"
+
+    for line in lines:
+        stripped = line.strip()
+
+        if stripped.startswith("#"):
+            text = stripped.lstrip("#").strip()
+            if not text:
+                continue
+            if state == "bar":
+                bar = text
+                state = "haiku"
+            elif state == "haiku" and len(haiku) < 3:
+                haiku.append(text)
+                if len(haiku) == 3:
+                    state = "directives"
+
+        elif stripped.startswith("User-agent:"):
+            agent = stripped.split(":", 1)[1].strip()
+            if agent != "*":
+                crawlers_seen.add(agent)
+
+        elif stripped.startswith("Disallow:"):
+            path = stripped.split(":", 1)[1].strip()
+            if path:
+                disallows.append(path)
+
+    return bar, haiku, disallows, crawlers_seen
+
+
+def append_to_memory(bar, haiku, disallows, crawlers_seen, notes=""):
+    entry = f"\n## {TODAY}\n\n"
+    entry += f"### bar\n{bar}\n\n"
+    entry += f"### haiku\n"
+    for line in haiku:
+        entry += f"{line}\n"
+    entry += "\n"
+    entry += f"### disallows\n"
+    for path in disallows:
+        entry += f"{path}\n"
+    entry += "\n"
+    entry += f"### crawlers seen\n{', '.join(sorted(crawlers_seen))}\n\n"
+    entry += f"### notes\n{notes}\n"
+
+    with open(MEMORY_PATH, "a") as f:
+        f.write(entry)
+        f.write("\n---\n")
+
+
+def trim_memory(max_entries=90):
+    if not MEMORY_PATH.exists():
+        return
+
+    text = MEMORY_PATH.read_text()
+    entries = text.strip().split("\n---\n")
+    if len(entries) <= max_entries:
+        return
+
+    kept = entries[-max_entries:]
+    MEMORY_PATH.write_text("\n---\n".join(kept) + "\n")
+
+
+def log_result(crawlers_seen, bar_line, success=True):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    crawlers = ", ".join(sorted(crawlers_seen)) if crawlers_seen else "none"
+    status = "OK" if success else "FAIL"
+    line = f"[{timestamp}] {status} | crawlers: {crawlers} | bar: {bar_line}\n"
+
+    with open(GENERATE_LOG, "a") as f:
+        f.write(line)
+
+    if GENERATE_LOG.stat().st_size > 1024 * 1024:
+        log_path = GENERATE_LOG
+        rotated = log_path.with_suffix(".log.1")
+        shutil.move(log_path, rotated)
+
+
+def main():
+    api_key = load_env()
+    memory = read_memory()
+    crawler_log = parse_logs()
+    bot_registry = build_bot_registry_text()
+
+    user_prompt = USER_PROMPT_TEMPLATE.format(
+        memory_contents=memory or "(no memory yet — first run)",
+        crawler_log=crawler_log or "(no crawlers detected yesterday)",
+        bot_registry=bot_registry,
+    )
+
+    try:
+        content = call_llm(api_key, user_prompt)
+    except Exception as e:
+        bar_line = f"LLM call failed: {e}"
+        log_result(set(), bar_line, success=False)
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    if not validate_output(content):
+        bar_line = content.split("\n")[0].lstrip("#").strip() if content else "(empty)"
+        log_result(set(), f"validation failed — {bar_line}", success=False)
+        print("ERROR: Generated content failed validation", file=sys.stderr)
+        print(content, file=sys.stderr)
+        sys.exit(1)
+
+    write_robots_txt(content)
+
+    bar, haiku, disallows, crawlers_seen = parse_generated_content(content)
+    append_to_memory(bar, haiku, disallows, crawlers_seen)
+    trim_memory()
+
+    log_result(crawlers_seen, bar)
+    print(f"OK | {TODAY} | {bar}")
+
+
+if __name__ == "__main__":
+    main()

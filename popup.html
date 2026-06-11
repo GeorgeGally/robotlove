@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 12px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+    h1 {
+      font-size: 14px;
+      font-weight: normal;
+      color: #666;
+      margin: 0 0 8px 0;
+    }
+    #comments {
+      background: #222;
+      padding: 8px;
+      border-radius: 2px;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .empty {
+      color: #555;
+      font-style: italic;
+    }
+    .stat {
+      color: #555;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    button {
+      background: #333;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      padding: 6px 12px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #444;
+    }
+    button.dismissed {
+      border-color: #4a4;
+      color: #4a4;
+    }
+  </style>
+</head>
+<body>
+  <h1># Robot Love</h1>
+  <div id="comments" class="empty">No comments on this site.</div>
+  <div class="stat" id="stats"></div>
+  <button id="dismissBtn">Permanently hide bar on this site</button>
+  <script src="popup.js"></script>
+</body>
+</html>

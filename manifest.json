@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Robot Love",
+  "version": "0.1",
+  "description": "Reads what websites write to robots.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Robot Love"
+  }
+}
