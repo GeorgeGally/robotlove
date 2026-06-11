@@ -19,7 +19,7 @@ ENV_PATH = os.environ.get("ROBOTS_ENV", BASE_DIR / ".env")
 LOG_PATH = os.environ.get("ROBOTS_LOG", "/home/radarboy/logs/radarboy.com/https")
 SITE_ROOT = os.environ.get(
     "ROBOTS_SITE_ROOT",
-    "/home/radarboy/radarboy.com/radarboy3000",
+    "/home/radarboy/radarboy.com",
 )
 MEMORY_PATH = BASE_DIR / "memory.md"
 GENERATE_LOG = BASE_DIR / "generate.log"

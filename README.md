@@ -93,7 +93,7 @@ three env vars control where the generator looks:
 | var | default | what it points to |
 | --- | ------- | ----------------- |
 | `ROBOTS_LOG` | `/home/radarboy/logs/radarboy.com/https` | your apache/nginx access log |
-| `ROBOTS_SITE_ROOT` | `/home/radarboy/radarboy.com/radarboy3000` | directory containing your `robots.txt` |
+| `ROBOTS_SITE_ROOT` | `/home/radarboy/radarboy.com` | directory containing your `robots.txt` |
 | `ROBOTS_ENV` | `.env` in the script's directory | path to your `.env` file |
 
 pass them inline or export before running:

@@ -28,6 +28,11 @@ echo "Now point robots at your robots.txt:"
 echo ""
 echo "  robots setup /path/to/robots.txt"
 echo ""
+echo "Common paths:"
+echo "  Dreamhost: /home/YOUR_USER/YOUR_DOMAIN/robots.txt"
+echo "  Apache:    /var/www/html/robots.txt"
+echo "  Nginx:     /usr/share/nginx/html/robots.txt"
+echo ""
 echo -n "Enter path (or press enter to do it later): "
 read -r ROBOTS_PATH
 if [ -n "$ROBOTS_PATH" ]; then

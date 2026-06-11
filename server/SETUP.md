@@ -46,7 +46,7 @@ python3 generate.py
 Verify:
 
 ```bash
-cat /home/radarboy/radarboy.com/radarboy3000/robots.txt
+cat /home/radarboy/radarboy.com/robots.txt
 cat generate.log
 cat memory.md
 ```
