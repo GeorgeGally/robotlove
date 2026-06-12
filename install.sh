@@ -107,8 +107,9 @@ if [ -n "$FOUND" ]; then
   echo "  robots \"your message here\""
 else
   echo "  no robots.txt found."
+  echo "  let's find one."
   echo ""
-  echo "  robots setup /path/to/robots.txt"
+  "$DEST" setup
 fi
 echo ""
 echo "  robots update   — pull latest version"
