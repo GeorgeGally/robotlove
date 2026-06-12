@@ -40,7 +40,7 @@ or just open your `robots.txt` and add a line:
 robots ai
 ```
 
-walks you through setup: api key, prompt template, test run, and optional cron job. once configured, run:
+walks you through setup: api key (get a free one at [openrouter.ai/keys](https://openrouter.ai/keys)), prompt template, test run, and optional cron job. once configured, run:
 
 ```bash
 robots generate
