@@ -88,43 +88,7 @@ echo ""
 echo "  robots installed to $DEST"
 echo ""
 
-auto_detect() {
-  for d in "$HOME" /var/www /usr/share/nginx/html /usr/local/www; do
-    find "$d" -maxdepth 3 -name robots.txt -type f 2>/dev/null
-  done
-}
-
-ALL_FOUND=$(auto_detect | sort -u)
-if [ -z "$ALL_FOUND" ]; then
-  echo "  no robots.txt found."
-  echo ""
-  echo "  let's find one."
-  echo ""
-  "$DEST" setup
-else
-  files=()
-  while IFS= read -r f; do
-    [ -n "$f" ] && files+=("$f")
-  done <<< "$ALL_FOUND"
-  if [ "${#files[@]}" -eq 1 ]; then
-    echo "ROBOTS=${files[0]}" > "$HOME/.robots_conf"
-    echo "  found robots.txt at: ${files[0]}"
-    echo ""
-    echo "  robots \"your message here\""
-  else
-    echo "  found ${#files[@]} robots.txt files:"
-    echo ""
-    for i in "${!files[@]}"; do
-      printf "  %d) %s\n" $((i + 1)) "${files[$i]}"
-    done
-    echo ""
-    read -r -p "  choose (1-${#files[@]}): " choice
-    idx=$((choice - 1))
-    echo "ROBOTS=${files[$idx]}" > "$HOME/.robots_conf"
-    echo "  configured: ${files[$idx]}"
-    echo ""
-    echo "  robots \"your message here\""
-  fi
-fi
+echo "  let's find your robots.txt."
 echo ""
+"$DEST" setup
 echo "  robots update   — pull latest version"
