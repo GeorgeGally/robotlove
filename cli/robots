@@ -273,10 +273,17 @@ ai_setup() {
       prompt="$default_prompt"
     fi
   else
-    echo "  saved: ${prompt:0:60}…"
-    read -r -p "  replace? [y/N] " yn
-    if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
-      read -r -p "  prompt: " prompt
+    echo "  Current prompt:"
+    echo "    $prompt"
+    echo ""
+    read -r -p "  [e]dit / [r]eplace / [k]eep: " ans
+    if [ "$ans" = "e" ] || [ "$ans" = "E" ]; then
+      echo "  current:"
+      echo "    $prompt"
+      read -r -p "  edit (enter to keep): " edited
+      [ -n "$edited" ] && prompt="$edited"
+    elif [ "$ans" = "r" ] || [ "$ans" = "R" ]; then
+      read -r -p "  new prompt: " prompt
       [ -z "$prompt" ] && prompt="$default_prompt"
     fi
   fi
