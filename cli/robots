@@ -235,39 +235,48 @@ ai_setup() {
     prompt=$(grep '^PROMPT_TEMPLATE=' "$env_file" | head -1 | cut -d= -f2-)
   fi
 
-  echo "🤖  AI setup"
+  echo ""
+  echo "  ┌────────────────────────────────────────────┐"
+  echo "  │           🤖  robots ai setup              │"
+  echo "  └────────────────────────────────────────────┘"
   echo ""
 
   # --- API key ---
+  echo "  ── api key ──────────────────────────────────"
+  echo ""
   if [ -z "$key" ]; then
-    echo "You need an OpenRouter API key. Get one at: https://openrouter.ai/keys"
-    read -r -p "OpenRouter API key: " key
-    [ -z "$key" ] && { echo "No key entered. Aborting."; exit 1; }
+    echo "  Get one at: https://openrouter.ai/keys"
+    read -r -p "  OpenRouter API key: " key
+    [ -z "$key" ] && { echo ""; echo "  ✗  No key entered. Aborting."; exit 1; }
   else
-    echo "Saved API key: ${key:0:12}…"
-    read -r -p "Replace saved key? (y/N) " yn
+    echo "  saved: ${key:0:12}…"
+    echo ""
+    read -r -p "  replace? [y/N] " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
-      read -r -p "OpenRouter API key: " key
+      read -r -p "  OpenRouter API key: " key
     fi
   fi
 
   # --- Prompt ---
+  echo ""
+  echo "  ── prompt ───────────────────────────────────"
+  echo ""
   if [ -z "$prompt" ]; then
-    echo ""
-    echo "Default prompt (the AI generates from this):"
+    echo "  default:"
     echo "  $default_prompt"
-    read -r -p "Customize? (y/N) " yn
+    echo ""
+    read -r -p "  customize? [y/N] " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
-      read -r -p "Prompt: " prompt
+      read -r -p "  prompt: " prompt
       [ -z "$prompt" ] && prompt="$default_prompt"
     else
       prompt="$default_prompt"
     fi
   else
-    echo "Prompt: configured"
-    read -r -p "Replace? (y/N) " yn
+    echo "  saved"
+    read -r -p "  replace? [y/N] " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
-      read -r -p "Prompt: " prompt
+      read -r -p "  prompt: " prompt
       [ -z "$prompt" ] && prompt="$default_prompt"
     fi
   fi
@@ -279,61 +288,67 @@ PROMPT_TEMPLATE=$prompt
 ENVEOF
   chmod 600 "$env_file"
   echo ""
-  echo "✓  Config saved to $env_file"
+  echo "  ✓  saved to $env_file"
+  echo ""
 
   # --- Test run ---
+  echo "  ── test ─────────────────────────────────────"
   echo ""
-  read -r -p "Run a test generation? (Y/n) " yn
+  read -r -p "  run a test generation? [Y/n] " yn
   if [ "$yn" != "n" ] && [ "$yn" != "N" ]; then
+    echo "  generating…"
     result=$(python3 "$llm" 2>/dev/null) || {
-      echo "Generation failed. Check your API key and network." >&2
-      echo "Retry: robots ai" >&2
+      echo "  ✗  generation failed. check your API key and network." >&2
+      echo "     retry: robots ai" >&2
       exit 1
     }
     first_line=$(echo "$result" | head -1)
     echo ""
     echo "  →  $first_line"
     echo ""
-    read -r -p "Post this? (y/N) " yn
+    read -r -p "  post this? [y/N] " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
       local slug; slug=$(slugify "$first_line")
       write_post "$ROBOTS" "/${slug}/"
-      echo "🤖  posted: /${slug}/"
+      echo "  🤖  posted: /${slug}/"
     fi
   fi
 
   # --- Cron ---
   echo ""
-  echo "Cron — daily generation"
+  echo "  ── cron ─────────────────────────────────────"
+  echo ""
   local robots_path; robots_path=$(command -v robots 2>/dev/null || echo "$0")
   local cron_line="0 3 * * * ${robots_path} generate >> \$HOME/.robots-generate.log 2>&1"
   if crontab -l 2>/dev/null | grep -qF "$cron_line"; then
-    echo "Cron: already installed"
+    echo "  cron: already installed"
   else
-    echo "1) Auto-install  (add to crontab)"
-    echo "2) Print instructions"
-    read -r -p "Choose (1/2): " choice
-    if [ "$choice" = "1" ]; then
+    echo "  1) auto-install"
+    echo "  2) print instructions"
+    read -r -p "  choose [1/2]: " choice
+    if [ "$choice" = "2" ]; then
+      echo ""
+      echo "  add to crontab:"
+      echo "  $cron_line"
+    else
       local tmp; tmp=$(mktemp)
       crontab -l 2>/dev/null > "$tmp" || true
       echo "$cron_line" >> "$tmp"
       if crontab "$tmp" 2>/dev/null; then
-        echo "✓  Cron installed (daily at 3 AM)"
+        echo "  ✓  cron installed (daily at 3am)"
       else
-        echo "✗  Cron install failed" >&2
+        echo "  ✗  cron install failed" >&2
         echo ""
-        echo "Add this to your crontab manually:"
+        echo "  add manually:"
         echo "  $cron_line"
       fi
       rm -f "$tmp"
-    else
-      echo ""
-      echo "Add this to your crontab:"
-      echo "  $cron_line"
     fi
   fi
   echo ""
-  echo "Done. Run 'robots generate' anytime to test."
+  echo "  ─────────────────────────────────────────────"
+  echo "  done. run 'robots generate' anytime."
+  echo ""
 }
 
 if [ "${1:-}" = "ai" ]; then
