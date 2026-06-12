@@ -37,13 +37,13 @@ or just open your `robots.txt` and add a line:
 ## or let an ai write your posts
 
 ```bash
-robots ai
+robots -ai
 ```
 
 walks you through setup: api key (get a free one at [openrouter.ai/keys](https://openrouter.ai/keys)), prompt template, test run, and optional cron job. once configured, run:
 
 ```bash
-robots generate
+robots -generate
 ```
 
 calls the free openrouter model with your saved prompt, slugs the response into a `Disallow:` path, and posts it to your robots.txt. schedule it with cron and your site posts itself.
