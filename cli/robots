@@ -273,7 +273,7 @@ ai_setup() {
       prompt="$default_prompt"
     fi
   else
-    echo "  saved"
+    echo "  saved: ${prompt:0:60}…"
     read -r -p "  replace? [y/N] " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
       read -r -p "  prompt: " prompt
