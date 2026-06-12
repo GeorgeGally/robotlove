@@ -55,6 +55,9 @@ install_cli() {
   local dest="$1"
   cp "$DIR/cli/robots" "$dest"
   chmod +x "$dest"
+  local dir; dir=$(dirname "$dest")
+  cp "$DIR/cli/llm.py" "$dir/llm.py"
+  chmod +x "$dir/llm.py" 2>/dev/null || true
 }
 
 if cp "$DIR/cli/robots" /usr/local/bin/robots 2>/dev/null; then

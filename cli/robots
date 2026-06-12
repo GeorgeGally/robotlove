@@ -146,6 +146,9 @@ if [ "${1:-}" = "update" ]; then
   DEST=$(command -v robots 2>/dev/null || echo "$HOME/bin/robots")
   cp cli/robots "$DEST"
   chmod +x "$DEST"
+  DEST_DIR=$(dirname "$DEST")
+  cp cli/llm.py "$DEST_DIR/llm.py"
+  chmod +x "$DEST_DIR/llm.py" 2>/dev/null || true
   exec "$DEST" welcome
 fi
 
@@ -198,6 +201,156 @@ if [ "${1:-}" = "welcome" ]; then
 ROBOT_EOF
   echo ""
   echo "  $(basename "$0") updated"
+  exit 0
+fi
+
+LLM_SCRIPT="$(dirname "$0")/llm.py"
+
+find_llm() {
+  if [ -f "$LLM_SCRIPT" ]; then
+    echo "$LLM_SCRIPT"
+    return 0
+  fi
+  local self
+  self=$(command -v robots 2>/dev/null || echo "$0")
+  local dir; dir=$(dirname "$self")
+  if [ -f "$dir/llm.py" ]; then
+    echo "$dir/llm.py"
+    return 0
+  fi
+  return 1
+}
+
+ai_setup() {
+  local llm; llm=$(find_llm) || { echo "Error: llm.py not found" >&2; exit 1; }
+  local env_file="$HOME/.robots_ai_env"
+  local key="" prompt=""
+  local default_prompt="Write a single path that could appear after Disallow: in a robots.txt file. Make it evocative, personal, specific. A failed experiment, a late-night thought, something started and given up on, a draft that should have stayed a draft. One line only. No explanation. Just the path."
+
+  if [ -f "$env_file" ]; then
+    key=$(grep '^OPENROUTER_API_KEY=' "$env_file" | head -1 | cut -d= -f2-)
+    prompt=$(grep '^PROMPT_TEMPLATE=' "$env_file" | head -1 | cut -d= -f2-)
+  fi
+
+  echo "🤖  AI setup"
+  echo ""
+
+  # --- API key ---
+  if [ -z "$key" ]; then
+    echo "Get an API key: https://openrouter.ai/keys"
+    read -r -p "OpenRouter API key: " key
+    [ -z "$key" ] && { echo "No key entered. Aborting."; exit 1; }
+  else
+    echo "API key: configured (${key:0:12}…)"
+    read -r -p "Replace? (y/N) " yn
+    if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
+      read -r -p "OpenRouter API key: " key
+    fi
+  fi
+
+  # --- Prompt ---
+  if [ -z "$prompt" ]; then
+    echo ""
+    echo "Default prompt (the AI generates from this):"
+    echo "  $default_prompt"
+    read -r -p "Customize? (y/N) " yn
+    if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
+      read -r -p "Prompt: " prompt
+      [ -z "$prompt" ] && prompt="$default_prompt"
+    else
+      prompt="$default_prompt"
+    fi
+  else
+    echo "Prompt: configured"
+    read -r -p "Replace? (y/N) " yn
+    if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
+      read -r -p "Prompt: " prompt
+      [ -z "$prompt" ] && prompt="$default_prompt"
+    fi
+  fi
+
+  # --- Save ---
+  cat > "$env_file" <<ENVEOF
+OPENROUTER_API_KEY=$key
+PROMPT_TEMPLATE=$prompt
+ENVEOF
+  chmod 600 "$env_file"
+  echo ""
+  echo "✓  Config saved to $env_file"
+
+  # --- Test run ---
+  echo ""
+  read -r -p "Run a test generation? (Y/n) " yn
+  if [ "$yn" != "n" ] && [ "$yn" != "N" ]; then
+    result=$(python3 "$llm" 2>/dev/null) || {
+      echo "Generation failed. Check your API key and network." >&2
+      echo "Retry: robots ai" >&2
+      exit 1
+    }
+    first_line=$(echo "$result" | head -1)
+    echo ""
+    echo "  →  $first_line"
+    echo ""
+    read -r -p "Post this? (y/N) " yn
+    if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
+      local slug; slug=$(slugify "$first_line")
+      write_post "$ROBOTS" "/${slug}/"
+      echo "🤖  posted: /${slug}/"
+    fi
+  fi
+
+  # --- Cron ---
+  echo ""
+  echo "Cron — daily generation"
+  local robots_path; robots_path=$(command -v robots 2>/dev/null || echo "$0")
+  local cron_line="0 3 * * * ${robots_path} generate >> \$HOME/.robots-generate.log 2>&1"
+  if crontab -l 2>/dev/null | grep -qF "$cron_line"; then
+    echo "Cron: already installed"
+  else
+    echo "1) Auto-install  (add to crontab)"
+    echo "2) Print instructions"
+    read -r -p "Choose (1/2): " choice
+    if [ "$choice" = "1" ]; then
+      local tmp; tmp=$(mktemp)
+      crontab -l 2>/dev/null > "$tmp" || true
+      echo "$cron_line" >> "$tmp"
+      if crontab "$tmp" 2>/dev/null; then
+        echo "✓  Cron installed (daily at 3 AM)"
+      else
+        echo "✗  Cron install failed" >&2
+        echo ""
+        echo "Add this to your crontab manually:"
+        echo "  $cron_line"
+      fi
+      rm -f "$tmp"
+    else
+      echo ""
+      echo "Add this to your crontab:"
+      echo "  $cron_line"
+    fi
+  fi
+  echo ""
+  echo "Done. Run 'robots generate' anytime to test."
+}
+
+if [ "${1:-}" = "ai" ]; then
+  load_robots_path
+  ai_setup
+  exit 0
+fi
+
+if [ "${1:-}" = "generate" ]; then
+  load_robots_path
+  llm=$(find_llm) || { echo "Error: llm.py not found" >&2; exit 1; }
+  result=$(python3 "$llm" 2>/dev/null) || {
+    echo "Generation failed. Run 'robots ai' to configure." >&2
+    exit 1
+  }
+  first_line=$(echo "$result" | head -1)
+  [ -z "$first_line" ] && { echo "Generation returned empty result" >&2; exit 1; }
+  slug=$(slugify "$first_line")
+  write_post "$ROBOTS" "/${slug}/"
+  echo "🤖  posted: /${slug}/"
   exit 0
 fi
 
