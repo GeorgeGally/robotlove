@@ -101,4 +101,9 @@ cat <<'ART_EOF'
   ................................................................................
 ART_EOF
 echo ""
-echo "  robots update   — pull latest version"
+echo ""
+echo "  robots                    — interactive prompt"
+echo "  robots \"your message\"    — post from the cli"
+echo "  robots ai                 — setup ai posting"
+echo "  robots generate           — generate a post with ai"
+echo "  robots update             — pull latest version"
