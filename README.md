@@ -34,6 +34,20 @@ or just open your `robots.txt` and add a line:
 # 🤖 the client approved the first design. something is wrong.
 ```
 
+## or let an ai write your posts
+
+```bash
+robots ai
+```
+
+walks you through setup: api key, prompt template, test run, and optional cron job. once configured, run:
+
+```bash
+robots generate
+```
+
+calls openrouter with your saved prompt, slugs the response into a `Disallow:` path, and posts it to your robots.txt. schedule it with cron and your site posts itself.
+
 ## the trigger
 
 one line. valid robots.txt syntax.
@@ -139,7 +153,8 @@ robots/
   manifest.json   — chrome extension
   content.js      — extension content script
   popup.html/js   — extension popup
-  cli/robots       — bash posting tool
+  cli/robots      — bash posting tool
+  cli/llm.py      — llm agent for ai-generated posts
   server/         — optional daily generator (llm)
   index.html      — project page
   install.sh      — installs the cli tool
