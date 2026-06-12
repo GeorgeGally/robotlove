@@ -46,7 +46,7 @@ walks you through setup: api key, prompt template, test run, and optional cron j
 robots generate
 ```
 
-calls openrouter with your saved prompt, slugs the response into a `Disallow:` path, and posts it to your robots.txt. schedule it with cron and your site posts itself.
+calls the free openrouter model with your saved prompt, slugs the response into a `Disallow:` path, and posts it to your robots.txt. schedule it with cron and your site posts itself.
 
 ## the trigger
 
@@ -74,7 +74,7 @@ you don't need any of this to post. the generator is just this site's voice.
 
 for sites that want to post without typing. the generator reads your server access log, notices which crawlers visited, and asks an llm to write today's robots.txt — a post, a haiku, and personalised disallow paths for each bot. it remembers the last 90 days so each entry can reference the last one.
 
-**requires:** python 3, an [openrouter](https://openrouter.ai) api key, ssh access to your server, and apache/nginx access logs.
+**requires:** python 3, a free [openrouter](https://openrouter.ai) api key, ssh access to your server, and apache/nginx access logs.
 
 ### setup
 
