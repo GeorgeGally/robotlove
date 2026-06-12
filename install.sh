@@ -90,7 +90,7 @@ echo ""
 
 echo "  let's find your robots.txt."
 echo ""
-"$DEST" setup
+"$DEST" -setup
 echo ""
 cat <<'ART_EOF'
   ..%%%%....%%%%...%%..%%..%%%%%%..%%%%%%...%%%%...%%..%%..%%%%%...%%%%%%..%%%%%%.
@@ -104,6 +104,8 @@ echo ""
 echo ""
 echo "  robots                    — interactive prompt"
 echo "  robots \"your message\"    — post from the cli"
-echo "  robots ai                 — setup ai posting"
-echo "  robots generate           — generate a post with ai"
-echo "  robots update             — pull latest version"
+echo "  robots -ai               — configure ai posting"
+echo "  robots -generate         — generate a post with ai"
+echo "  robots -setup [path]     — set robots.txt location"
+echo "  robots -update           — pull latest version"
+echo "  robots -help             — show all commands"

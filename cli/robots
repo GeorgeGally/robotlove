@@ -29,8 +29,8 @@ load_robots_path() {
       return 0
     fi
   done
-  echo "Error: robots.txt not found. Run: robots setup /path/to/robots.txt" >&2
-  echo "       Or run: robots setup  (interactive prompt)" >&2
+  echo "Error: robots.txt not found. Run: robots -setup /path/to/robots.txt" >&2
+  echo "       Or run: robots -setup  (interactive prompt)" >&2
   exit 1
 }
 
@@ -112,7 +112,7 @@ PYEOF
 
 # --- commands ---
 
-if [ "${1:-}" = "setup" ]; then
+if [ "${1:-}" = "-setup" ] || [ "${1:-}" = "setup" ]; then
   path="${2:-}"
   if [ -z "$path" ]; then
     read -r -p "robots.txt path: " path
@@ -130,7 +130,7 @@ if [ "${1:-}" = "setup" ]; then
   exit 0
 fi
 
-if [ "${1:-}" = "update" ]; then
+if [ "${1:-}" = "-update" ] || [ "${1:-}" = "update" ]; then
   REPO_FILE="$HOME/.robots_repo"
   if [ ! -f "$REPO_FILE" ]; then
     echo "Error: repo path not saved. Re-run install.sh from the robots directory." >&2
@@ -210,6 +210,18 @@ ROBOT_EOF
 ART_EOF
   echo ""
   echo "  $(basename "$0") updated"
+  exit 0
+fi
+
+if [ "${1:-}" = "-help" ] || [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+  echo ""
+  echo "  robots                     — interactive prompt"
+  echo "  robots \"your message\"     — post a path"
+  echo "  robots -ai                 — configure ai posting"
+  echo "  robots -generate           — generate a post with ai"
+  echo "  robots -setup [path]       — set robots.txt location"
+  echo "  robots -update             — pull latest version"
+  echo "  robots -help               — this message"
   exit 0
 fi
 
@@ -315,7 +327,7 @@ ENVEOF
     echo "  generating…"
     result=$(python3 "$llm" 2>/dev/null) || {
       echo "  ✗  generation failed. check your API key and network." >&2
-      echo "     retry: robots ai" >&2
+      echo "     retry: robots -ai" >&2
       exit 1
     }
     first_line=$(echo "$result" | head -1)
@@ -363,11 +375,11 @@ ENVEOF
   fi
   echo ""
   echo "  ─────────────────────────────────────────────"
-  echo "  done. run 'robots generate' anytime."
+  echo "  done. run 'robots -generate' anytime."
   echo ""
 }
 
-if [ "${1:-}" = "ai" ]; then
+if [ "${1:-}" = "-ai" ] || [ "${1:-}" = "ai" ]; then
   load_robots_path
   if [ "${2:-}" = "--reset" ]; then
     rm -f "$HOME/.robots_ai_env"
@@ -376,11 +388,11 @@ if [ "${1:-}" = "ai" ]; then
   exit 0
 fi
 
-if [ "${1:-}" = "generate" ]; then
+if [ "${1:-}" = "-generate" ] || [ "${1:-}" = "generate" ]; then
   load_robots_path
   llm=$(find_llm) || { echo "Error: llm.py not found" >&2; exit 1; }
   result=$(python3 "$llm" 2>/dev/null) || {
-    echo "Generation failed. Run 'robots ai' to configure." >&2
+    echo "Generation failed. Run 'robots -ai' to configure." >&2
     exit 1
   }
   first_line=$(echo "$result" | head -1)
