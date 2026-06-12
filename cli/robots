@@ -240,12 +240,12 @@ ai_setup() {
 
   # --- API key ---
   if [ -z "$key" ]; then
-    echo "Get an API key: https://openrouter.ai/keys"
+    echo "You need an OpenRouter API key. Get one at: https://openrouter.ai/keys"
     read -r -p "OpenRouter API key: " key
     [ -z "$key" ] && { echo "No key entered. Aborting."; exit 1; }
   else
-    echo "API key: configured (${key:0:12}…)"
-    read -r -p "Replace? (y/N) " yn
+    echo "Saved API key: ${key:0:12}…"
+    read -r -p "Replace saved key? (y/N) " yn
     if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
       read -r -p "OpenRouter API key: " key
     fi
@@ -338,6 +338,9 @@ ENVEOF
 
 if [ "${1:-}" = "ai" ]; then
   load_robots_path
+  if [ "${2:-}" = "--reset" ]; then
+    rm -f "$HOME/.robots_ai_env"
+  fi
   ai_setup
   exit 0
 fi
