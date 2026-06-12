@@ -87,9 +87,9 @@ if match:
         m = re.match(r'(?i)Disallow:\s*(.*)', line.strip())
         if m:
             existing.append(m.group(1).strip())
-# prepend new disallow, cap at 5 newest
+# prepend new disallow, cap at 8 newest
 all_paths = [new_disallow] + existing
-all_paths = all_paths[:5]
+all_paths = all_paths[:8]
 # remove existing Robots block
 content = re.sub(r'(?i)User-agent:\s*Robots\n(?:Disallow:[^\n]*\n)*\n?', '', content)
 # build and prepend new block

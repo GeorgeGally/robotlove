@@ -11,7 +11,8 @@
   const BAR_ID = 'robot-love-bar'
   const FETCH_TIMEOUT = 3000
   const MAX_BYTES = 10240
-  const CYCLE_MS = 4000
+  const CYCLE_MS = 7000
+  const TYPE_MS = 30
 
   async function getPersistentDismissed() {
     try {
@@ -43,29 +44,39 @@
     text.style.cssText = `overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;`
 
     let currentIndex = 0
-    let interval = null
+    let timer = null
 
-    function showPath(index) {
-      text.textContent = `Disallow: ${paths[index]}`
-    }
-
-    function startCycle() {
-      if (interval) clearInterval(interval)
-      if (paths.length < 2) { interval = null; return }
-      interval = setInterval(() => {
+    function scheduleNext() {
+      if (paths.length < 2) return
+      timer = setTimeout(() => {
         currentIndex = (currentIndex + 1) % paths.length
-        showPath(currentIndex)
+        typePath(currentIndex)
       }, CYCLE_MS)
     }
 
-    showPath(0)
-    startCycle()
+    function typePath(index) {
+      const target = `Disallow: ${paths[index]}`
+      text.textContent = ''
+      let i = 0
+      function typeLoop() {
+        if (i < target.length) {
+          text.textContent += target[i]
+          i++
+          setTimeout(typeLoop, TYPE_MS)
+        } else {
+          scheduleNext()
+        }
+      }
+      typeLoop()
+    }
+
+    typePath(0)
 
     bar.addEventListener('click', () => {
       if (paths.length < 2) return
+      clearTimeout(timer)
       currentIndex = (currentIndex + 1) % paths.length
-      showPath(currentIndex)
-      startCycle()
+      typePath(currentIndex)
     })
 
     const link = document.createElement('a')
