@@ -17,7 +17,7 @@
       font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
       font-size: 16px;
       line-height: 1.7;
-      padding: 0 20px 80px;
+      padding: 0 24px 80px;
       display: flex;
       justify-content: center;
     }
@@ -25,17 +25,17 @@
     .page {
       max-width: 880px;
       width: 100%;
-      margin-top: 132px;
+      margin-top: 128px;
     }
 
     /* — bar — */
     .bar {
       background: #1a1a1a;
-      padding: 9px 14px;
-      margin-bottom: 70px;
-      font-size: 13px;
+      padding: 8px 16px;
+      margin-bottom: 64px;
+      font-size: 16px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
     }
 
@@ -44,7 +44,7 @@
     .bar .raw {
       color: #555;
       text-decoration: none;
-      font-size: 11px;
+      font-size: 8px;
       flex-shrink: 0;
     }
     .bar .raw:hover { color: #fff; }
@@ -53,8 +53,8 @@
     .heart {
       width: 4em;
       height: 3em;
-      margin: 14px 0 42px 2px;
-      font-size: 7px;
+      margin: 16px 0 48px 2px;
+      font-size: 8px;
     }
     .heart span {
       display: block;
@@ -85,7 +85,7 @@
     h1 .hl { color: #F22613; font-weight: 300;}
 
     .intro {
-      font-size: 15px;
+      font-size: 16px;
       color: #555;
       margin-top: 64px;
       margin-bottom: 64px;
@@ -95,7 +95,7 @@
     h2 {
       font-size: 16px;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       color: #212123;
       margin-bottom: 16px;
       margin-top: 96px;
@@ -110,29 +110,29 @@
       margin-top: 72px;
     }
 
-    p { margin-bottom: 18px; color: #444; font-size: 15px; }
+    p { margin-bottom: 32px; color: #444; font-size: 16px; }
 
     a { color: #05920a; text-decoration: underline; }
     a:hover { text-decoration: underline; }
 
     code {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
+      font-size: 16px;
       background: #e4e4e4;
-      padding: 1px 5px;
+      padding: 2px 4px;
     }
 
     /* — code blocks — */
     .code {
       position: relative;
       background: #1a1a1a;
-      padding: 24px 28px;
+      padding: 24px 32px;
       overflow-x: auto;
       color: #4caf50;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.8;
-      margin: 18px 0 20px;
+      margin: 24px 0 24px;
       white-space: pre;
     }
 
@@ -143,30 +143,31 @@
 
     .copy-btn {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 8px;
+      right: 8px;
       background: #2a2a2a;
       border: 1px solid #444;
       color: #777;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
+      font-size: 8px;
       padding: 2px 8px;
       cursor: pointer;
       line-height: 1.5;
-      transition: color .15s, border-color .15s;
+      transition: color .125s, border-color .125s;
     }
     .copy-btn:hover { color: #ccc; border-color: #666; }
     .copy-btn.copied { color: #5dff8f; border-color: #4caf50; }
 
     /* — posts — */
-    .posts { margin: 0 0 20px; }
+    .posts { margin: 0 0 16px; }
     .post {
       border-left: 2px solid #ccc;
-      padding: 10px 0 10px 18px;
+      padding: 8px 0 8px 16px;
       margin-bottom: 2px;
     }
-    .post .loc { font-size: 11px; color: #999; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
-    .post .line { font-size: 14px; color: #333; }
+    .post .loc { font-size: 8px; color: #999; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 2px; }
+    .post .line { font-size: 16px;
+      color: #333; }
     .post .line .prefix { color: #999; }
     .post .line .text { color: #111; }
 
@@ -175,21 +176,21 @@
       margin-top: 80px;
       padding-top: 24px;
       border-top: 1px solid #ddd;
-      font-size: 12px;
+      font-size: 16px;
       color: #aaa;
     }
     .footer a { color: #aaa; }
     .footer a:hover { color: #F22613; }
 
-    @media (max-width: 500px) {
-      body { font-size: 14px; }
-      h1 { font-size: 36px; letter-spacing: -1px; }
-      .code { padding: 18px 16px; font-size: 13px; }
+    @media (max-width: 496px) {
+      body { font-size: 16px; }
+      h1 { font-size: 32px; letter-spacing: -2px; }
+      .code { padding: 16px 16px; font-size: 16px; }
     }
 
 .globalWrapper {
   display: block;
-  width: 100px;
+  width: 96px;
 }
 
 
@@ -214,100 +215,98 @@
 .sq01 {
   grid-column: 3 / 3;
   grid-row: 1 / 1;
-  animation: sqAnimate 0.3s 0.3s forwards;
+  animation: sqAnimate 0.25s 0.25s forwards;
 }
 
 .sq02 {
   grid-column: 9 / 9;
   grid-row: 1 / 1;
-  animation: sqAnimate 0.3s 0.2s forwards;
+  animation: sqAnimate 0.25s 0.125s forwards;
 }
 
 .sq03 {
   grid-column: 4 / 4;
   grid-row: 2 / 2;
-  animation: sqAnimate 0.3s 0.4s forwards;
+  animation: sqAnimate 0.25s 0.375s forwards;
 }
 
 .sq04 {
   grid-column: 8 / 8;
   grid-row: 2 / 2;
-  animation: sqAnimate 0.3s 0.5s forwards;
+  animation: sqAnimate 0.25s 0.5s forwards;
 }
 
 .sq05 {
   grid-column: 3 / 10;
   grid-row: 3 / 3;
-  animation: sqAnimate 0.3s 0.6s forwards;
+  animation: sqAnimate 0.25s 0.625s forwards;
 }
 
 .sq06 {
   grid-column: 2 / 4;
   grid-row: 4 / 4;
-  animation: sqAnimate 0.3s 0.7s forwards;
+  animation: sqAnimate 0.25s 0.75s forwards;
 }
 
 .sq07 {
   grid-column: 5 / 8;
   grid-row: 4 / 4;
-  animation: sqAnimate 0.3s 0.8s forwards;
+  animation: sqAnimate 0.25s 0.75s forwards;
 }
 
 .sq08 {
   grid-column: 9 / 11;
   grid-row: 4 / 4;
-  animation: sqAnimate 0.3s 0.9s forwards;
+  animation: sqAnimate 0.25s 0.875s forwards;
 }
 
 .sq09 {
   grid-column: 2 / 11;
   grid-row: 5 / 5;
-  animation: sqAnimate 0.3s 1s forwards;
+  animation: sqAnimate 0.25s 1s forwards;
 }
 
 .sq10 {
   grid-column: 1 / 1;
   grid-row: 5 / 8;
-  animation: sqAnimate 0.3s 1.1s forwards;
+  animation: sqAnimate 0.25s 1.125s forwards;
 }
 
 .sq11 {
   grid-column: 11 / 11;
   grid-row: 5 / 8;
-  animation: sqAnimate 0.3s 0.8s forwards;
+  animation: sqAnimate 0.25s 0.75s forwards;
 }
 
 .sq12 {
   grid-column: 3 / 10;
   grid-row: 6 / 6;
-  animation: sqAnimate 0.3s 0.5s forwards;
+  animation: sqAnimate 0.25s 0.5s forwards;
 }
 
 .sq13 {
   grid-column: 3 / 3;
   grid-row: 7 / 7;
-  animation: sqAnimate 0.3s 0.6s forwards;
+  animation: sqAnimate 0.25s 0.625s forwards;
 }
 
 .sq14 {
   grid-column: 9 / 9;
   grid-row: 7 / 7;
-  animation: sqAnimate 0.3s 0.7s forwards;
+  animation: sqAnimate 0.25s 0.75s forwards;
 }
 
 .sq15 {
   grid-column: 4 / 6;
   grid-row: 8 / 8;
-  animation: sqAnimate 0.3s 0.2s forwards;
+  animation: sqAnimate 0.25s 0.125s forwards;
 }
 
 .sq16 {
   grid-column: 7 / 9;
   grid-row: 8 / 8;
-  animation: sqAnimate 0.3s 0.5s alternate-reverse;
+  animation: sqAnimate 0.25s 0.5s alternate-reverse;
 }
-
-/* ANIMATION */
 
 @keyframes sqAnimate {
     0% {background: white;}
