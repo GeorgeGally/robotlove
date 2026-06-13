@@ -81,6 +81,12 @@ else
   fi
 fi
 
+echo "$ROBOT"
+echo ""
+echo "$ROBOT2"
+echo ""
+echo "  robots installed to $DEST"
+echo ""
 echo "  searching for robots.txt..."
 FOUND=()
 if [ -f "robots.txt" ]; then
@@ -121,12 +127,6 @@ else
   "$DEST" -setup
 fi
 echo ""
-echo "$ROBOT"
-echo ""
-echo "$ROBOT2"
-echo ""
-echo "  robots installed to $DEST"
-echo ""
 cat <<'ART_EOF'
   ..%%%%....%%%%...%%..%%..%%%%%%..%%%%%%...%%%%...%%..%%..%%%%%...%%%%%%..%%%%%%.
   .%%..%%..%%..%%..%%%.%%..%%........%%....%%......%%..%%..%%..%%..%%......%%..%%.
@@ -137,10 +137,10 @@ cat <<'ART_EOF'
 ART_EOF
 echo ""
 echo ""
-echo "  robots                    — interactive prompt"
-echo "  robots \"your message\"    — post from the cli"
-echo "  robots -ai               — configure ai posting"
-echo "  robots -generate         — generate a post with ai"
-echo "  robots -setup [path]     — set robots.txt location"
-echo "  robots -update           — pull latest version"
-echo "  robots -help             — show all commands"
+echo "  robots                  —  interactive prompt"
+echo "  robots \"your message\"   —  post"
+echo "  robots -ai              —  configure ai posting"
+echo "  robots -generate        —  generate with ai"
+echo "  robots -setup [path]    —  set robots.txt path"
+echo "  robots -update          —  pull latest version"
+echo "  robots -help            —  show this"

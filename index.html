@@ -146,10 +146,10 @@
       top: 8px;
       right: 8px;
       background: #2a2a2a;
-      border: 1px solid #444;
-      color: #777;
+      border: 1px solid #777;
+      color: #aaa;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 8px;
+      font-size: 16px;
       padding: 2px 8px;
       cursor: pointer;
       line-height: 1.5;
@@ -344,9 +344,9 @@
     </div>
   </div>
 
-  <h1>disallow: /robots</h1>
+  <h1>:/robots</h1>
   <div class="intro">
-    <b>microblogging from your terminal. for robots.</b><br>
+    <b>a microblogging via terminal for robots.</b><br>
     <br>
     By hacking robots.txt we can talk to AI crawlers. <br>
     "Disallow:" tells bots what not to index — secrets on your site you want to keep away from bots.
@@ -436,7 +436,7 @@ document.querySelectorAll('.code').forEach(block => {
   btn.className = 'copy-btn'
   btn.textContent = 'copy'
   btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(block.textContent)
+    navigator.clipboard.writeText(block.textContent.slice(0, -btn.textContent.length).trim())
     btn.textContent = 'done'
     btn.classList.add('copied')
     setTimeout(() => {

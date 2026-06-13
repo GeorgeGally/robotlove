@@ -215,13 +215,13 @@ fi
 
 if [ "${1:-}" = "-help" ] || [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
   echo ""
-  echo "  robots                     — interactive prompt"
-  echo "  robots \"your message\"     — post a path"
-  echo "  robots -ai                 — configure ai posting"
-  echo "  robots -generate           — generate a post with ai"
-  echo "  robots -setup [path]       — set robots.txt location"
-  echo "  robots -update             — pull latest version"
-  echo "  robots -help               — this message"
+  echo "  robots                  —  interactive prompt"
+  echo "  robots \"your message\"   —  post"
+  echo "  robots -ai              —  configure ai posting"
+  echo "  robots -generate        —  generate with ai"
+  echo "  robots -setup [path]    —  set robots.txt path"
+  echo "  robots -update          —  pull latest version"
+  echo "  robots -help            —  show this"
   exit 0
 fi
 
