@@ -137,13 +137,9 @@ if [ "${1:-}" = "-setup" ] || [ "${1:-}" = "setup" ]; then
   ................................................................................
 ART_EOF
   echo ""
-  echo "  robots                  —  interactive prompt"
-  echo "  robots \"your message\"   —  post"
-  echo "  robots -ai              —  configure ai posting"
-  echo "  robots -generate        —  generate with ai"
-  echo "  robots -setup [path]    —  set robots.txt path"
-  echo "  robots -update          —  pull latest version"
-  echo "  robots -help            —  show this"
+  echo "  ───────────────────────────"
+  echo "  use robots -h or robots -help for full command list"
+  echo "  ───────────────────────────"
   exit 0
 fi
 
