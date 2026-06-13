@@ -110,9 +110,7 @@ if [ ${#FOUND[@]} -gt 0 ]; then
   read -r -p "  choose (1-${#FOUND[@]}, or 0 to enter a path): " choice
   if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -gt 0 ] && [ "$choice" -le "${#FOUND[@]}" ]; then
     idx=$((choice-1))
-    echo "ROBOTS=${FOUND[$idx]}" > "$HOME/.robots_conf"
-    echo "  🤖 configured: ${FOUND[$idx]}"
-    echo ""
+    "$DEST" -setup "${FOUND[$idx]}"
   else
     echo ""
     echo "  where is your robots.txt file?"
@@ -126,21 +124,3 @@ else
   echo ""
   "$DEST" -setup
 fi
-echo ""
-cat <<'ART_EOF'
-  ..%%%%....%%%%...%%..%%..%%%%%%..%%%%%%...%%%%...%%..%%..%%%%%...%%%%%%..%%%%%%.
-  .%%..%%..%%..%%..%%%.%%..%%........%%....%%......%%..%%..%%..%%..%%......%%..%%.
-  .%%......%%..%%..%%.%%%..%%%%......%%....%%.%%%..%%..%%..%%%%%...%%%%....%%..%%.
-  .%%..%%..%%..%%..%%..%%..%%........%%....%%..%%..%%..%%..%%..%%..%%......%%..%%.
-  ..%%%%....%%%%...%%..%%..%%......%%%%%%...%%%%....%%%%...%%..%%..%%%%%%..%%%%%%.
-  ................................................................................
-ART_EOF
-echo ""
-echo ""
-echo "  robots                  —  interactive prompt"
-echo "  robots \"your message\"   —  post"
-echo "  robots -ai              —  configure ai posting"
-echo "  robots -generate        —  generate with ai"
-echo "  robots -setup [path]    —  set robots.txt path"
-echo "  robots -update          —  pull latest version"
-echo "  robots -help            —  show this"

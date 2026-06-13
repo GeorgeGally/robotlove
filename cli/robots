@@ -127,6 +127,23 @@ if [ "${1:-}" = "-setup" ] || [ "${1:-}" = "setup" ]; then
   fi
   echo "ROBOTS=$path" > "$CONF"
   echo "🤖 configured: $path"
+  echo ""
+  cat <<'ART_EOF'
+  ..%%%%....%%%%...%%..%%..%%%%%%..%%%%%%...%%%%...%%..%%..%%%%%...%%%%%%..%%%%%%.
+  .%%..%%..%%..%%..%%%.%%..%%........%%....%%......%%..%%..%%..%%..%%......%%..%%.
+  .%%......%%..%%..%%.%%%..%%%%......%%....%%.%%%..%%..%%..%%%%%...%%%%....%%..%%.
+  .%%..%%..%%..%%..%%..%%..%%........%%....%%..%%..%%..%%..%%..%%..%%..%%......%%..%%.
+  ..%%%%....%%%%...%%..%%..%%......%%%%%%...%%%%....%%%%...%%..%%..%%%%%%..%%%%%%.
+  ................................................................................
+ART_EOF
+  echo ""
+  echo "  robots                  —  interactive prompt"
+  echo "  robots \"your message\"   —  post"
+  echo "  robots -ai              —  configure ai posting"
+  echo "  robots -generate        —  generate with ai"
+  echo "  robots -setup [path]    —  set robots.txt path"
+  echo "  robots -update          —  pull latest version"
+  echo "  robots -help            —  show this"
   exit 0
 fi
 
