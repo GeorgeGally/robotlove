@@ -81,16 +81,51 @@ else
   fi
 fi
 
+echo "  searching for robots.txt..."
+FOUND=()
+if [ -f "robots.txt" ]; then
+  FOUND+=("$(cd "$(dirname "robots.txt")" && pwd)/robots.txt")
+fi
+if [ -f "../robots.txt" ]; then
+  FOUND+=("$(cd .. && pwd)/robots.txt")
+fi
+for d in */; do
+  [ -d "$d" ] && [ -f "${d}robots.txt" ] && FOUND+=("$(cd "$d" && pwd)/robots.txt")
+done
+
+if [ ${#FOUND[@]} -gt 0 ]; then
+  echo ""
+  echo "  found ${#FOUND[@]} robots.txt:"
+  for i in "${!FOUND[@]}"; do
+    echo "    $((i+1))) ${FOUND[$i]}"
+  done
+  echo ""
+  echo "  we need your robots.txt to post."
+  read -r -p "  choose (1-${#FOUND[@]}, or 0 to enter a path): " choice
+  if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -gt 0 ] && [ "$choice" -le "${#FOUND[@]}" ]; then
+    idx=$((choice-1))
+    echo "ROBOTS=${FOUND[$idx]}" > "$HOME/.robots_conf"
+    echo "  🤖 configured: ${FOUND[$idx]}"
+    echo ""
+  else
+    echo ""
+    echo "  where is your robots.txt file?"
+    echo ""
+    "$DEST" -setup
+  fi
+else
+  echo ""
+  echo "  none found."
+  echo "  where is your robots.txt file?"
+  echo ""
+  "$DEST" -setup
+fi
+echo ""
 echo "$ROBOT"
 echo ""
 echo "$ROBOT2"
 echo ""
 echo "  robots installed to $DEST"
-echo ""
-
-echo "  let's find your robots.txt."
-echo ""
-"$DEST" -setup
 echo ""
 cat <<'ART_EOF'
   ..%%%%....%%%%...%%..%%..%%%%%%..%%%%%%...%%%%...%%..%%..%%%%%...%%%%%%..%%%%%%.

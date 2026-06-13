@@ -115,7 +115,7 @@ PYEOF
 if [ "${1:-}" = "-setup" ] || [ "${1:-}" = "setup" ]; then
   path="${2:-}"
   if [ -z "$path" ]; then
-    read -r -p "robots.txt path: " path
+    read -r -p "robots.txt path (absolute): " path
   fi
   # if a directory was given, look for robots.txt inside it
   if [ -d "$path" ]; then
